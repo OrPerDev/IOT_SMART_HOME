@@ -1,0 +1,9 @@
+# IDE
+.vscode
+.idea
+
+# Cached files
+__pycache__
+
+# local packages
+venv
