@@ -1,11 +1,10 @@
-from typing import Tuple
 from math import sin, cos, sqrt, atan2, radians
 
 # Approximate radius of earth in km
 R = 6373.0
 
 
-def calc_distance_km(c1: Tuple[float, float], c2: Tuple[float, float]) -> float:
+def calc_distance_km(c1: tuple[float, float], c2: tuple[float, float]) -> float:
     """
     Calculate distance between two gps coordinates in meters.
     Coordinates should be in the form of (latitude, longitude).
