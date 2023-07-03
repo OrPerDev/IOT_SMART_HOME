@@ -4,6 +4,7 @@
 
 # Cached files
 __pycache__
+.pytest_cache
 
 # local packages
 venv
