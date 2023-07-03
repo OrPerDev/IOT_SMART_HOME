@@ -30,13 +30,3 @@ def calc_distance_km(c1: Tuple[float, float], c2: Tuple[float, float]) -> float:
     distance_km = R * c
 
     return distance_km
-
-
-if __name__ == "__main__":
-    holon_mall = (32.01278924606207, 34.77908810682126)
-    hit = (32.01487634797979, 34.77458326803195)
-
-    distance = calc_distance_km(holon_mall, hit)
-
-    print("Result: ", distance)
-    print("Should be: ", 0.48, "km")
