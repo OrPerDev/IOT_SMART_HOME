@@ -1,5 +1,5 @@
 import pytest
-from .distance_calculator import calc_distance_km
+from distance_calculator import calc_distance_km
 
 
 def test_calc_distance_km_should_return_correct_distance():

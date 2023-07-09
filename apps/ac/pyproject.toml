@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "ac"
+version = "0.1.0"
+description = ""
+authors = ["Shahar Tal <chapo12345@gmail.com>"]
+readme = "README.md"
+
+
+[tool.poetry.dependencies]
+python = "^3.11"
+paho-message-router = { path = "../../shared/paho_message_router" }
+paho-mqtt = "^1.6.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

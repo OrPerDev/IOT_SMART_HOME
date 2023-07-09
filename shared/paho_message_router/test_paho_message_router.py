@@ -4,7 +4,7 @@ import paho.mqtt.client as mqtt
 from typing import Any
 import uuid
 import time
-from .paho_message_router import MessageRouter
+from paho_message_router import MessageRouter
 from enum import Enum
 
 
