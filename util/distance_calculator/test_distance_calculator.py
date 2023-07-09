@@ -1,5 +1,5 @@
 import pytest
-from distance_calculator import calc_distance_km
+from .distance_calculator import calc_distance_km
 
 
 def test_calc_distance_km_should_return_correct_distance():
@@ -37,7 +37,7 @@ def test_calc_distance_km_should_fail_when_input_is_not_tuple_of_floats():
     c2 = (32.01278924606207, "34.77908810682126")
 
     with pytest.raises(TypeError):
-        distance = calc_distance_km(c1, c2)
+        distance = calc_distance_km(c1, c2)  # type: ignore
 
 
 def test_calc_distance_km_should_fail_when_input_is_not_tuple_of_length_2():
@@ -45,4 +45,4 @@ def test_calc_distance_km_should_fail_when_input_is_not_tuple_of_length_2():
     c2 = (32.01278924606207, 34.77908810682126, 34.77908810682126)
 
     with pytest.raises(TypeError):
-        distance = calc_distance_km(c1, c2)
+        distance = calc_distance_km(c1, c2)  # type: ignore
