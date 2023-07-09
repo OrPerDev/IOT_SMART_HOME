@@ -1,7 +1,6 @@
 import pytest
 import mock
 import paho.mqtt.client as mqtt
-from typing import Any
 import uuid
 import time
 from paho_message_router import MessageRouter
