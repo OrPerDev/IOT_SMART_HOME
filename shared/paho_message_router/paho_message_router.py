@@ -1,18 +1,17 @@
 from __future__ import annotations
-from typing import Any
 import paho.mqtt.client as mqtt
 from typing import Protocol
 
 
 class OnMessageCallback(Protocol):
     def __call__(
-        self, client: mqtt.Client, userdata: Any, msg: mqtt.MQTTMessage
+        self, client: mqtt.Client, userdata: mqtt._UserData, msg: mqtt.MQTTMessage
     ) -> None:
         pass
 
 
 def default_fallback_message_handler(
-    client: mqtt.Client, userdata: Any, msg: mqtt.MQTTMessage
+    client: mqtt.Client, userdata: mqtt._UserData, msg: mqtt.MQTTMessage
 ) -> None:
     print(
         f"Received message on unregistered topic subscription: {msg.topic} - {msg.payload}"
@@ -45,7 +44,7 @@ class MessageRouter:
         self._fallback_message_handler = callback
 
     def on_message(
-        self, client: mqtt.Client, userdata: Any, msg: mqtt.MQTTMessage
+        self, client: mqtt.Client, userdata: mqtt._UserData, msg: mqtt.MQTTMessage
     ) -> None:
         callback = self._route_topic_to_callback(msg.topic)
         callback(client, userdata, msg)
