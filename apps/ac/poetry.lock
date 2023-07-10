@@ -13,13 +13,13 @@ files = [
 
 [[package]]
 name = "execnet"
-version = "2.0.1"
+version = "2.0.2"
 description = "execnet: rapid multi-Python deployment"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "execnet-2.0.1-py3-none-any.whl", hash = "sha256:eb9d131005116496240eabb9682a580c11e46071b7e873fdc30e4251d5e7945c"},
-    {file = "execnet-2.0.1.tar.gz", hash = "sha256:5b4e29cf334efcdc488ae21e0f841dff6564545df767ecb21b786f9c260fcf09"},
+    {file = "execnet-2.0.2-py3-none-any.whl", hash = "sha256:88256416ae766bc9e8895c76a87928c0012183da3cc4fc18016e6f050e025f41"},
+    {file = "execnet-2.0.2.tar.gz", hash = "sha256:cc59bc4423742fd71ad227122eb0dd44db51efb3dc4095b45ac9a08c770096af"},
 ]
 
 [package.extras]
@@ -62,6 +62,22 @@ files = [
     {file = "packaging-23.1-py3-none-any.whl", hash = "sha256:994793af429502c4ea2ebf6bf664629d07c1a9fe974af92966e4b8d2df7edc61"},
     {file = "packaging-23.1.tar.gz", hash = "sha256:a392980d2b6cffa644431898be54b0045151319d1e7ec34f0cfed48767dd334f"},
 ]
+
+[[package]]
+name = "paho-basic-callbacks"
+version = "0.1.0"
+description = ""
+optional = false
+python-versions = "^3.11"
+files = []
+develop = false
+
+[package.dependencies]
+paho-mqtt = "^1.6.1"
+
+[package.source]
+type = "directory"
+url = "../../shared/paho_basic_callbacks"
 
 [[package]]
 name = "paho-message-router"
@@ -169,4 +185,4 @@ testing = ["filelock"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "ea7ef4d975656968300fa63543b7e95515b15106648b3f4ada4174cd5bf98a4a"
+content-hash = "e80dad24caa83f599b75a6be5afc9e3ab906a6d908b7d1928a05ad54570b9836"

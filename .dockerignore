@@ -1,0 +1,15 @@
+# git
+.git
+.gitignore
+
+# IDE
+.vscode
+.idea
+
+# Cached files
+__pycache__
+.pytest_cache
+
+# local packages
+venv
+.venv

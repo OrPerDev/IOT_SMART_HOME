@@ -1,15 +1,12 @@
 [tool.poetry]
-name = "ac"
+name = "paho-basic-callbacks"
 version = "0.1.0"
 description = ""
 authors = ["Shahar Tal <chapo12345@gmail.com>"]
 readme = "README.md"
 
-
 [tool.poetry.dependencies]
 python = "^3.11"
-paho-message-router = { path = "../../shared/paho_message_router" }
-paho-basic-callbacks = { path = "../../shared/paho_basic_callbacks" }
 paho-mqtt = "^1.6.1"
 
 
