@@ -17,6 +17,7 @@ client = InstantMQTTClient(
     connection_config=ConnectionConfig(host=broker, port=port, keepalive=90),
     listen_automatically=True,
 )
+client.connect()
 
 topic_prefix = "iot/home_YY"
 

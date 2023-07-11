@@ -15,6 +15,8 @@ client = InstantMQTTClient(
     ),
     connection_config=ConnectionConfig(host=broker, port=port, keepalive=90),
 )
+client.connect()
+
 # set last will
 client.will_set(
     topic="iot/home_YY/sensor_7402/lwt",

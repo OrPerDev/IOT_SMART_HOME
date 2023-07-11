@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Callable, Any, Protocol
+from typing import Any, Protocol
 import paho.mqtt.client as mqtt
 from paho.mqtt.properties import Properties as MQTTProperties
 from threading import Thread, Lock
@@ -57,22 +57,22 @@ class InstantMQTTClient(mqtt.Client):
         listen_automatically: bool = False,
     ) -> None:
         super().__init__(**asdict(client_config))
+        # defaults
+        self.loop_thread = None
+        self.loop_is_running = False
+        self.loop_lock = Lock()
+
+        # assign configs
+        self.connection_config = connection_config
+        self.client_config = client_config
+        self.listen_automatically = listen_automatically
+
         # set callbacks
         self.on_log = paho_basic_callbacks.on_log
         self.on_connect = paho_basic_callbacks.on_connect
         self.on_disconnect = paho_basic_callbacks.on_disconnect
         self.router = MessageRouter()
         self.on_message = self.router.on_message
-
-        # connect
-        self.connect(**asdict(connection_config))
-
-        # listen
-        self.loop_thread = None
-        self.loop_is_running = False
-        self.loop_lock = Lock()
-        if listen_automatically:
-            self.start_listen()
 
     def start_listen(self) -> None:
         with self.loop_lock:
@@ -133,6 +133,18 @@ class InstantMQTTClient(mqtt.Client):
         if result[0] != mqtt.MQTT_ERR_SUCCESS:
             return result
         self.router.unregister(topic=topic)
+        return result
+
+    def connect(self) -> int:
+        # connect
+        result: int = super().connect(**asdict(self.connection_config))
+        if result != mqtt.MQTT_ERR_SUCCESS:
+            return result
+
+        # listen if needed (automatically when connected)
+        if self.listen_automatically:
+            self.start_listen()
+
         return result
 
     def disconnect(self) -> int:
