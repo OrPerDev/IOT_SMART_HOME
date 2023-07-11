@@ -41,7 +41,7 @@ class MQTTConnectionConfig:
 
 
 @dataclass(frozen=True)
-class MQTTClientProtocolConfig:
+class MQTTClientConfig:
     client_id: str | None = ""
     clean_session: bool | None = None
     userdata: Any = None
@@ -58,10 +58,10 @@ class InstantMQTTClient(mqtt.Client):
     def __init__(
         self,
         connection_config: MQTTConnectionConfig,
-        protocol_config: MQTTClientProtocolConfig,
+        client_config: MQTTClientConfig,
         behavior_config: MQTTClientBehaviorConfig,
     ) -> None:
-        super().__init__(**asdict(protocol_config))
+        super().__init__(**asdict(client_config))
         # defaults
         self.loop_thread = None
         self.loop_is_running = False
@@ -69,7 +69,7 @@ class InstantMQTTClient(mqtt.Client):
 
         # assign configs
         self.connection_config = connection_config
-        self.protocol_config = protocol_config
+        self.client_config = client_config
         self.behavior_config = behavior_config
 
         # set callbacks

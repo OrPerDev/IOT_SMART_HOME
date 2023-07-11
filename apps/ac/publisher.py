@@ -1,7 +1,7 @@
 from instant_mqtt_client import (
     InstantMQTTClient,
     MQTTClientBehaviorConfig,
-    MQTTClientProtocolConfig,
+    MQTTClientConfig,
     MQTTConnectionConfig,
     QualityOfService,
 )
@@ -11,7 +11,7 @@ broker = "broker.hivemq.com"
 port = 1883
 
 client = InstantMQTTClient(
-    protocol_config=MQTTClientProtocolConfig(
+    client_config=MQTTClientConfig(
         client_id="IOT_PUB_313357402_YY_4545", clean_session=True
     ),
     connection_config=MQTTConnectionConfig(host=broker, port=port, keepalive=90),
