@@ -30,7 +30,7 @@ class QualityOfService(int, Enum):
 
 
 @dataclass(frozen=True)
-class ConnectionConfig:
+class MQTTConnectionConfig:
     host: str
     port: int = 1883
     keepalive: int = 60
@@ -41,7 +41,7 @@ class ConnectionConfig:
 
 
 @dataclass(frozen=True)
-class ClientConfig:
+class MQTTClientProtocolConfig:
     client_id: str | None = ""
     clean_session: bool | None = None
     userdata: Any = None
@@ -49,14 +49,19 @@ class ClientConfig:
     transport: str = "tcp"
 
 
+@dataclass(frozen=True)
+class MQTTClientBehaviorConfig:
+    listen_automatically: bool = False
+
+
 class InstantMQTTClient(mqtt.Client):
     def __init__(
         self,
-        connection_config: ConnectionConfig,
-        client_config: ClientConfig,
-        listen_automatically: bool = False,
+        connection_config: MQTTConnectionConfig,
+        protocol_config: MQTTClientProtocolConfig,
+        behavior_config: MQTTClientBehaviorConfig,
     ) -> None:
-        super().__init__(**asdict(client_config))
+        super().__init__(**asdict(protocol_config))
         # defaults
         self.loop_thread = None
         self.loop_is_running = False
@@ -64,8 +69,8 @@ class InstantMQTTClient(mqtt.Client):
 
         # assign configs
         self.connection_config = connection_config
-        self.client_config = client_config
-        self.listen_automatically = listen_automatically
+        self.protocol_config = protocol_config
+        self.behavior_config = behavior_config
 
         # set callbacks
         self.on_log = paho_basic_callbacks.on_log
@@ -142,7 +147,7 @@ class InstantMQTTClient(mqtt.Client):
             return result
 
         # listen if needed (automatically when connected)
-        if self.listen_automatically:
+        if self.behavior_config.listen_automatically:
             self.start_listen()
 
         return result
