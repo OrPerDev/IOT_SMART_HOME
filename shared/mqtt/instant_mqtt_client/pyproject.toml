@@ -1,14 +1,16 @@
 [tool.poetry]
-name = "ac"
+name = "instant-mqtt-client"
 version = "0.1.0"
 description = ""
 authors = ["Shahar Tal <chapo12345@gmail.com>"]
 readme = "README.md"
 
-
 [tool.poetry.dependencies]
 python = "^3.11"
-instant-mqtt-client = { path = "../../shared/mqtt/instant_mqtt_client" }
+paho-message-router = { path = "../paho_message_router" }
+paho-basic-callbacks = { path = "../paho_basic_callbacks" }
+paho-mqtt = "^1.6.1"
+
 
 [build-system]
 requires = ["poetry-core"]

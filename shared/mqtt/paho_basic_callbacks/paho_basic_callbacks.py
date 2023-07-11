@@ -26,14 +26,14 @@ def transform_mqtt_log_level_to_logging_log_level(level: int) -> int:
         return logging.INFO
 
 
-def _on_log(
+def on_log(
     client: mqtt.Client, userdata: Any, level: int, buf: str
 ) -> None:
     level = transform_mqtt_log_level_to_logging_log_level(level=level)
     logger.log(level, buf)
 
 
-def _on_connect(
+def on_connect(
     client: mqtt.Client, userdata: Any, flags: dict, rc: int
 ) -> None:
     if rc == mqtt.MQTT_ERR_SUCCESS:
@@ -42,7 +42,7 @@ def _on_connect(
         logger.error("Bad connection Returned code=", rc)
 
 
-def _on_disconnect(
+def on_disconnect(
     client: mqtt.Client, userdata: Any, rc: int = mqtt.MQTT_ERR_SUCCESS
 ) -> None:
     if rc == mqtt.MQTT_ERR_SUCCESS:
@@ -51,17 +51,10 @@ def _on_disconnect(
         logger.error("Unexpected disconnection. Returned code=", rc)
 
 
-def _on_message(
+def on_message(
     client: mqtt.Client, userdata: Any, msg: mqtt.MQTTMessage
 ) -> None:
     topic = msg.topic
     m_decode = str(msg.payload.decode("utf-8", "ignore"))
     logger.info("Now message received: %s", m_decode)
     logger.info("It was topic: %s", topic)
-
-
-def bind_callbacks(client: mqtt.Client):
-    client.on_connect = _on_connect
-    client.on_disconnect = _on_disconnect
-    client.on_log = _on_log
-    client.on_message = _on_message

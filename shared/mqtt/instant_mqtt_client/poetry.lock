@@ -37,32 +37,14 @@ files = [
 ]
 
 [[package]]
-name = "instant-mqtt-client"
-version = "0.1.0"
-description = ""
-optional = false
-python-versions = "^3.11"
-files = []
-develop = false
-
-[package.dependencies]
-paho-basic-callbacks = {path = "../paho_basic_callbacks"}
-paho-message-router = {path = "../paho_message_router"}
-paho-mqtt = "^1.6.1"
-
-[package.source]
-type = "directory"
-url = "../../shared/mqtt/instant_mqtt_client"
-
-[[package]]
 name = "mock"
-version = "5.1.0"
+version = "5.0.2"
 description = "Rolling backport of unittest.mock for all Pythons"
 optional = false
 python-versions = ">=3.6"
 files = [
-    {file = "mock-5.1.0-py3-none-any.whl", hash = "sha256:18c694e5ae8a208cdb3d2c20a993ca1a7b0efa258c247a1e565150f477f83744"},
-    {file = "mock-5.1.0.tar.gz", hash = "sha256:5e96aad5ccda4718e0a229ed94b2024df75cc2d55575ba5762d31f5767b8767d"},
+    {file = "mock-5.0.2-py3-none-any.whl", hash = "sha256:0e0bc5ba78b8db3667ad636d964eb963dc97a59f04c6f6214c5f0e4a8f726c56"},
+    {file = "mock-5.0.2.tar.gz", hash = "sha256:06f18d7d65b44428202b145a9a36e99c2ee00d1eb992df0caf881d4664377891"},
 ]
 
 [package.extras]
@@ -95,7 +77,7 @@ paho-mqtt = "^1.6.1"
 
 [package.source]
 type = "directory"
-url = "../../shared/mqtt/paho_basic_callbacks"
+url = "../paho_basic_callbacks"
 
 [[package]]
 name = "paho-message-router"
@@ -115,7 +97,7 @@ pytest-xdist = "^3.3.1"
 
 [package.source]
 type = "directory"
-url = "../../shared/mqtt/paho_message_router"
+url = "../paho_message_router"
 
 [[package]]
 name = "paho-mqtt"
@@ -203,4 +185,4 @@ testing = ["filelock"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "537c45d3b879e2b16f3cd2d5400705b7fcc616430a5de90f1da8c3fff53d4669"
+content-hash = "1d2f27e4fd4fd29107c49fe9b07fc6ee524b2ed9e24c2f6ce7230f5bf221af3e"
