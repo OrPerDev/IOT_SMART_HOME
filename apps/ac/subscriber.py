@@ -3,6 +3,7 @@ from instant_mqtt_client import (
     ConnectionConfig,
     ClientConfig,
     MQTTProperties,
+    QualityOfService,
 )
 import time
 
@@ -35,7 +36,9 @@ def sensor_topic_handler(
     print(decoded_message)
 
 
-client.subscribe(topic=sub_topic, qos=1, on_message=sensor_topic_handler)
+client.subscribe(
+    topic=sub_topic, qos=QualityOfService.AT_MOST_ONCE, on_message=sensor_topic_handler
+)
 
 time.sleep(5.0)
 

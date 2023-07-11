@@ -3,6 +3,7 @@ from typing import Callable, Any, Protocol
 import paho.mqtt.client as mqtt
 from paho.mqtt.properties import Properties as MQTTProperties
 from threading import Thread, Lock
+from enum import Enum
 from dataclasses import dataclass, asdict
 import paho_basic_callbacks
 from paho_message_router import (
@@ -13,9 +14,19 @@ from paho_message_router import (
 
 class OnMessageCallback(Protocol):
     def __call__(
-        self, topic: str, payload: bytes, qos: int, properties: MQTTProperties | None
+        self,
+        topic: str,
+        payload: bytes,
+        qos: QualityOfService,
+        properties: MQTTProperties | None,
     ) -> None:
         pass
+
+
+class QualityOfService(int, Enum):
+    AT_MOST_ONCE = 0
+    AT_LEAST_ONCE = 1
+    EXACTLY_ONCE = 2
 
 
 @dataclass(frozen=True)
@@ -102,7 +113,7 @@ class InstantMQTTClient(mqtt.Client):
     def subscribe(
         self,
         topic: str,
-        qos: int,
+        qos: QualityOfService,
         on_message: OnMessageCallback,
         options: mqtt.SubscribeOptions | None = None,
         properties: MQTTProperties | None = None,

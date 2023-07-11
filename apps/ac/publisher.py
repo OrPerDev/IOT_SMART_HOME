@@ -2,6 +2,7 @@ from instant_mqtt_client import (
     InstantMQTTClient,
     ConnectionConfig,
     ClientConfig,
+    QualityOfService,
 )
 import time
 
@@ -16,7 +17,10 @@ client = InstantMQTTClient(
 )
 # set last will
 client.will_set(
-    topic="iot/home_YY/sensor_7402/lwt", payload="I am dead", qos=2, retain=False
+    topic="iot/home_YY/sensor_7402/lwt",
+    payload="I am dead",
+    qos=QualityOfService.EXACTLY_ONCE,
+    retain=False,
 )
 
 topic_prefix = "iot/home_YY"
@@ -27,7 +31,9 @@ sub_topic = f"{topic_prefix}/sensor_{some_sensor_id}"
 
 message = "my message"
 
-client.publish(topic=sub_topic, payload=message, qos=0, retain=False)
+client.publish(
+    topic=sub_topic, payload=message, qos=QualityOfService.AT_MOST_ONCE, retain=False
+)
 
 time.sleep(1)
 
