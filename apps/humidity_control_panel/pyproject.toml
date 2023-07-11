@@ -1,14 +1,13 @@
 [tool.poetry]
-name = "ac"
+name = "humidity-control-panel"
 version = "0.1.0"
 description = ""
 authors = ["Shahar Tal <chapo12345@gmail.com>"]
-readme = "README.md"
-
 
 [tool.poetry.dependencies]
 python = "^3.11"
 instant-mqtt-client = { path = "../../shared/mqtt/instant_mqtt_client" }
+tk = "^0.1.0"
 
 [build-system]
 requires = ["poetry-core"]
