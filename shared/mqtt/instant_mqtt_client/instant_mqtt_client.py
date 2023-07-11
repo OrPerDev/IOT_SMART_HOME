@@ -62,7 +62,7 @@ class InstantMQTTClient(mqtt.Client):
         self.on_connect = paho_basic_callbacks.on_connect
         self.on_disconnect = paho_basic_callbacks.on_disconnect
         self.router = MessageRouter()
-        self._on_message = self.router.on_message
+        self.on_message = self.router.on_message
 
         # connect
         self.connect(**asdict(connection_config))
@@ -73,10 +73,6 @@ class InstantMQTTClient(mqtt.Client):
         self.loop_lock = Lock()
         if listen_automatically:
             self.start_listen()
-
-    @mqtt.Client.on_message.setter
-    def on_message(self, on_message: Callable) -> None:
-        self.default_on_message = on_message
 
     def start_listen(self) -> None:
         with self.loop_lock:
