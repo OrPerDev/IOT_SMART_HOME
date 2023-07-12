@@ -2,7 +2,10 @@
 name = "paho-basic-callbacks"
 version = "0.1.0"
 description = ""
-authors = ["Shahar Tal <chapo12345@gmail.com>"]
+authors = [
+    "Shahar Tal <stalmail10@gmail.com>"
+    "Or Peretz <or3325@gmail.com>"
+]
 
 [tool.poetry.dependencies]
 python = "^3.11"
