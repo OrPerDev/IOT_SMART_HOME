@@ -6,7 +6,7 @@ formatter = logging.Formatter("[%(asctime)s] [%(name)s] [%(levelname)s] %(messag
 handler = logging.StreamHandler()
 handler.setFormatter(formatter)
 
-logger = logging.getLogger('MQTT Client')
+logger = logging.getLogger("MQTT Client")
 logger.addHandler(handler)
 logger.setLevel(logging.DEBUG)
 
@@ -26,16 +26,12 @@ def transform_mqtt_log_level_to_logging_log_level(level: int) -> int:
         return logging.INFO
 
 
-def on_log(
-    client: mqtt.Client, userdata: Any, level: int, buf: str
-) -> None:
+def on_log(client: mqtt.Client, userdata: Any, level: int, buf: str) -> None:
     level = transform_mqtt_log_level_to_logging_log_level(level=level)
     logger.log(level, buf)
 
 
-def on_connect(
-    client: mqtt.Client, userdata: Any, flags: dict, rc: int
-) -> None:
+def on_connect(client: mqtt.Client, userdata: Any, flags: dict, rc: int) -> None:
     if rc == mqtt.MQTT_ERR_SUCCESS:
         logger.info("connected OK")
     else:
@@ -51,9 +47,7 @@ def on_disconnect(
         logger.error("Unexpected disconnection. Returned code=", rc)
 
 
-def on_message(
-    client: mqtt.Client, userdata: Any, msg: mqtt.MQTTMessage
-) -> None:
+def on_message(client: mqtt.Client, userdata: Any, msg: mqtt.MQTTMessage) -> None:
     topic = msg.topic
     m_decode = str(msg.payload.decode("utf-8", "ignore"))
     logger.info("Now message received: %s", m_decode)
