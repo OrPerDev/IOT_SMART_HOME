@@ -13,6 +13,6 @@ COPY ${MONOREPO_APP_PATH} /usr/src/monorepo/${MONOREPO_APP_PATH}
 
 WORKDIR /usr/src/monorepo/${MONOREPO_APP_PATH}
 
-RUN poetry install
+RUN poetry install --compile
 
-ENTRYPOINT ["poetry", "run", "python", "ac.py"]
+ENTRYPOINT ["./run.sh"]
