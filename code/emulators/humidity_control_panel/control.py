@@ -19,18 +19,18 @@ class UserInterface(Protocol):
         ...
 
     @property
-    def on_adjust_humidiy_call(self) -> Callable:
+    def on_adjust_humidity_call(self) -> Callable:
         ...
 
-    @on_adjust_humidiy_call.setter
-    def on_adjust_humidiy_call(self, callback: Callable):
+    @on_adjust_humidity_call.setter
+    def on_adjust_humidity_call(self, callback: Callable):
         ...
 
 
 class HumidityController:
     def __init__(self, ui: UserInterface, humidity_sensor_id: str, pump_id: str):
         self.ui = ui
-        self.ui.on_adjust_humidiy_call = self.on_adjust_humidity_call
+        self.ui.on_adjust_humidity_call = self.on_adjust_humidity_call
 
         self.humidity_sensor_id = humidity_sensor_id
         self.pump_id = pump_id
