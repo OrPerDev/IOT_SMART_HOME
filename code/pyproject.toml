@@ -3,7 +3,7 @@ name = "iot-smart-home"
 version = "0.1.0"
 description = ""
 authors = [
-    "Shahar Tal <stalmail10@gmail.com>"
+    "Shahar Tal <stalmail10@gmail.com>",
     "Or Peretz <or3325@gmail.com>"
 ]
 readme = "README.md"
