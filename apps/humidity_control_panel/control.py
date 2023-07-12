@@ -14,7 +14,7 @@ port = 1883
 sensor_topics_prefix = "iot/home/313357402/YY"
 
 
-class GUI(Protocol):
+class UserInterface(Protocol):
     def update_humidity_level(self, level: float) -> None:
         ...
 
@@ -28,9 +28,9 @@ class GUI(Protocol):
 
 
 class HumidityController:
-    def __init__(self, gui: GUI, humidity_sensor_id: str, pump_id: str):
-        self.gui = gui
-        self.gui.on_adjust_humidiy_call = self.on_adjust_humidity_call
+    def __init__(self, ui: UserInterface, humidity_sensor_id: str, pump_id: str):
+        self.ui = ui
+        self.ui.on_adjust_humidiy_call = self.on_adjust_humidity_call
 
         self.humidity_sensor_id = humidity_sensor_id
         self.pump_id = pump_id
@@ -94,4 +94,4 @@ class HumidityController:
         decoded_message = str(payload.decode("utf-8", "ignore"))
         # data is just the humidity level
         humidity_level = float(decoded_message)
-        self.gui.update_humidity_level(humidity_level)
+        self.ui.update_humidity_level(humidity_level)
