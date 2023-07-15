@@ -14,6 +14,7 @@ distance_calculator = { path = "../../shared/gps/distance_calculator" }
 osmnx = "^1.5.1"
 networkx = "^3.1"
 scikit-learn = "^1.3.0"
+pillow = "^10.0.0"
 
 
 [build-system]

@@ -1,10 +1,11 @@
 import tkinter as tk
+import PIL
+import os
 import tkintermapview
 from typing import Callable
 from distance_calculator import calc_distance_km
 import osmnx as ox
 import networkx as nx
-import numpy as np
 from enum import Enum
 
 
@@ -13,26 +14,49 @@ class TravelMode(str, Enum):
     DRIVING = "drive"
 
 
+MAX_DISTANCE_TO_pet_TO_SHOW_PATH_KM = 1.0
+
+
 class ApplicationGUI:
     def __init__(self):
         self.window = tk.Tk()
         self.window.title("Application")
         self.window.configure(bg="#222")
         self.window_width = 900
-        self.window_height = 500
+        self.window_height = 600
         self.window.geometry(f"{self.window_width}x{self.window_height}")
 
+        # markers
+        self.pet_marker_image = PIL.ImageTk.PhotoImage(
+            PIL.Image.open(
+                os.path.join(
+                    os.path.dirname(os.path.abspath(__file__)), "assets", "dog-area.png"
+                )
+            ).resize((50, 50))
+        )
+        self.user_marker_image = PIL.ImageTk.PhotoImage(
+            PIL.Image.open(
+                os.path.join(
+                    os.path.dirname(os.path.abspath(__file__)), "assets", "person.png"
+                )
+            ).resize((50, 50))
+        )
+
+        self.prepare_map_view_loading_indicator()
+        self.prepare_map_update_message_label()
+        self.prepare_map_long_distance_message_label()
         self.prepare_map_view()
         self.prepare_map_view_controllers()
-        self.prepare_distance_to_target_label()
+        self.prepare_distance_to_pet_label()
         self.prepare_recording_control_buttons()
 
         self.user_gps_coordinates = None
         self.user_marker = None
-        self.target_gps_coordinates = None
-        self.target_marker = None
+        self.pet_gps_coordinates = None
+        self.pet_marker = None
 
         self.travel_mode = TravelMode.WALKING
+        self.user_coordinate_during_latest_map_graph_generation = None
         self.latest_map_graph = None
         self.latest_path = None
 
@@ -46,19 +70,20 @@ class ApplicationGUI:
         )
         self.map_widget.set_zoom(15)
         self.map_widget.pack()
+
         self.display_map_widget(display=False)
 
     def prepare_map_view_controllers(self):
         center_x = self.window_width / 2
         center_y = self.window_height / 2
-        center_to_target_button_x = center_x + 300
-        center_to_target_button_y = center_y - 50
+        center_to_pet_button_x = center_x + 300
+        center_to_pet_button_y = center_y - 50
         center_to_user_button_x = center_x + 308
         center_to_user_button_y = center_y
 
-        self.center_to_target_button = tk.Button(
+        self.center_to_pet_button = tk.Button(
             self.window,
-            text="Center to target",
+            text="Center to pet",
             font=("Arial", 14, "bold"),
             bg="#4CAF50",
             fg="black",
@@ -67,10 +92,10 @@ class ApplicationGUI:
             pady=10,
             activebackground="#45A049",
             activeforeground="black",
-            command=self.center_to_target_gps_coordinates,
+            command=self.center_to_pet_gps_coordinates,
         )
-        self.center_to_target_button.place(
-            x=center_to_target_button_x, y=center_to_target_button_y, anchor="center"
+        self.center_to_pet_button.place(
+            x=center_to_pet_button_x, y=center_to_pet_button_y, anchor="center"
         )
 
         self.center_to_user_button = tk.Button(
@@ -91,9 +116,65 @@ class ApplicationGUI:
             x=center_to_user_button_x, y=center_to_user_button_y, anchor="center",
         )
 
-    def prepare_distance_to_target_label(self):
-        self.distance_to_target_text_display = tk.StringVar()
-        self.distance_to_target_text_display.set("Waiting for data...")
+    def prepare_map_view_loading_indicator(self):
+        self.map_loading_indicator_text_display = tk.StringVar()
+        self.map_loading_indicator_text_display.set("Loading map...")
+        self.map_loading_indicator = tk.Label(
+            self.window,
+            textvariable=self.map_loading_indicator_text_display,
+            font=("Arial", 18, "bold"),
+            fg="white",
+            bg="#222",
+        )
+
+        label_x = self.window_width / 2
+        label_y = self.window_height / 2 - 200
+
+        self.map_loading_indicator.place(x=label_x, y=label_y, anchor="center")
+
+    def update_map_update_message_label(self, message: str):
+        self.map_update_message_text_display.set(message)
+
+    def prepare_map_update_message_label(self):
+        self.map_update_message_text_display = tk.StringVar()
+        self.map_update_message_text_display.set("")
+
+        label_x = self.window_width / 2
+        label_y = self.window_height / 2 + 205
+
+        self.map_update_message_label = tk.Label(
+            self.window,
+            textvariable=self.map_update_message_text_display,
+            font=("Arial", 18, "bold"),
+            fg="white",
+            bg="#222",
+        )
+        self.map_update_message_label.place(x=label_x, y=label_y, anchor="center")
+
+    def update_map_long_distance_message_text(self, message: str) -> None:
+        self.map_long_distance_message_text_display.set(message)
+
+    def prepare_map_long_distance_message_label(self):
+        self.map_long_distance_message_text_display = tk.StringVar()
+        self.map_long_distance_message_text_display.set("")
+
+        label_x = self.window_width / 2
+        label_y = self.window_height / 2 + 175
+
+        self.map_long_distance_message_label = tk.Label(
+            self.window,
+            textvariable=self.map_long_distance_message_text_display,
+            font=("Arial", 18, "bold"),
+            fg="yellow",
+            bg="#222",
+        )
+        self.map_long_distance_message_label.place(
+            x=label_x, y=label_y, anchor="center"
+        )
+
+    def prepare_distance_to_pet_label(self):
+        self.distance_to_pet_text_display = tk.StringVar()
+        self.distance_to_pet_text_display.set("Waiting for data...")
 
         center_x = self.window_width / 2
         center_y = self.window_height / 2
@@ -103,7 +184,7 @@ class ApplicationGUI:
 
         self.displayed_text_distance_label = tk.Label(
             self.window,
-            textvariable=self.distance_to_target_text_display,
+            textvariable=self.distance_to_pet_text_display,
             font=("Arial", 18, "bold"),
             fg="white",
             bg="#222",
@@ -111,7 +192,7 @@ class ApplicationGUI:
         self.displayed_text_distance_label.place(x=label_x, y=label_y, anchor="center")
 
     def prepare_recording_control_buttons(self):
-        self.button_coordinates = (450, 450)
+        self.button_coordinates = (self.window_width / 2, self.window_height / 2 + 250)
 
         self.start_recording_button = tk.Button(
             self.window,
@@ -176,8 +257,12 @@ class ApplicationGUI:
             self.map_widget_label.place(
                 x=self.window_width / 2, y=self.window_height / 2, anchor="center"
             )
+            self.map_loading_indicator.place_forget()
         else:
             self.map_widget_label.place_forget()
+            self.map_loading_indicator.place(
+                x=self.window_width / 2, y=self.window_height / 2, anchor="center"
+            )
 
     def toggle_recording_button(self, recording: bool) -> None:
         if recording:
@@ -199,24 +284,24 @@ class ApplicationGUI:
                 anchor="center",
             )
 
-    def update_target_gps_coordinates(self, coordinates: tuple[float, float]) -> None:
-        self.target_gps_coordinates = coordinates
-        self.render_target_gps_marker()
-        self.update_distance_to_target_text_display()
-        self.sync_path_from_user_to_target()
+    def update_pet_gps_coordinates(self, coordinates: tuple[float, float]) -> None:
+        self.pet_gps_coordinates = coordinates
+        self.render_pet_gps_marker()
+        self.update_distance_to_pet_text_display()
+        self.sync_path_from_user_to_pet()
 
-    def update_distance_to_target_text_display(self) -> None:
-        if self.target_gps_coordinates is None:
-            print("No target GPS coordinates")
+    def update_distance_to_pet_text_display(self) -> None:
+        if self.pet_gps_coordinates is None:
+            print("No pet GPS coordinates")
             return
         if self.user_gps_coordinates is None:
             print("No user GPS coordinates")
             return
         distance_in_km = calc_distance_km(
-            self.user_gps_coordinates, self.target_gps_coordinates
+            self.user_gps_coordinates, self.pet_gps_coordinates
         )
-        text = f"Distance to target: {distance_in_km:.2f} km"
-        self.distance_to_target_text_display.set(text)
+        text = f"Distance to pet: {distance_in_km:.2f} km"
+        self.distance_to_pet_text_display.set(text)
 
     def set_user_gps_coordinates(self, coordinates: tuple[float, float]) -> None:
         first_coordinates_signal = self.user_gps_coordinates is None
@@ -226,39 +311,46 @@ class ApplicationGUI:
             self.display_map_widget(display=True)
             self.center_to_user_gps_coordinates()
         self.render_user_gps_marker()
-        self.update_distance_to_target_text_display()
-        self.sync_path_from_user_to_target()
+        self.center_to_user_gps_coordinates()
+        self.update_distance_to_pet_text_display()
+        self.sync_path_from_user_to_pet()
 
-    def render_target_gps_marker(self):
-        if self.target_gps_coordinates is None:
-            print("No target GPS coordinates")
+    def render_pet_gps_marker(self):
+        if self.pet_gps_coordinates is None:
+            print("No pet GPS coordinates")
             return
-        new_target_marker = self.map_widget.set_marker(
-            self.target_gps_coordinates[0],
-            self.target_gps_coordinates[1],
-            text="Target",
+        new_pet_marker = self.map_widget.set_marker(
+            self.pet_gps_coordinates[0],
+            self.pet_gps_coordinates[1],
+            text="Pet",
+            icon=self.pet_marker_image,
+            icon_anchor="s",
         )
-        if self.target_marker is not None:
-            self.target_marker.delete()
-        self.target_marker = new_target_marker
+        if self.pet_marker is not None:
+            self.pet_marker.delete()
+        self.pet_marker = new_pet_marker
 
     def render_user_gps_marker(self):
         if self.user_gps_coordinates is None:
             print("No user GPS coordinates")
             return
         new_user_marker = self.map_widget.set_marker(
-            self.user_gps_coordinates[0], self.user_gps_coordinates[1], text="You"
+            self.user_gps_coordinates[0],
+            self.user_gps_coordinates[1],
+            text="You",
+            icon=self.user_marker_image,
+            icon_anchor="s",
         )
         if self.user_marker is not None:
             self.user_marker.delete()
         self.user_marker = new_user_marker
 
-    def center_to_target_gps_coordinates(self) -> None:
-        if self.target_gps_coordinates is None:
-            print("No target GPS coordinates")
+    def center_to_pet_gps_coordinates(self) -> None:
+        if self.pet_gps_coordinates is None:
+            print("No pet GPS coordinates")
             return
         self.map_widget.set_position(
-            self.target_gps_coordinates[0], self.target_gps_coordinates[1]
+            self.pet_gps_coordinates[0], self.pet_gps_coordinates[1]
         )
 
     def center_to_user_gps_coordinates(self) -> None:
@@ -277,27 +369,45 @@ class ApplicationGUI:
         if self.latest_map_graph is not None:
             if (
                 calc_distance_km(
-                    self.user_gps_coordinates, self.latest_map_graph.graph["center"]
+                    self.user_gps_coordinates,
+                    self.user_coordinate_during_latest_map_graph_generation,
                 )
                 < 0.5
             ):
                 return
+        # update the map graph
+        self.update_map_update_message_label("Updating map graph...")
         self.latest_map_graph = ox.graph_from_point(
             center_point=self.user_gps_coordinates,
-            dist=1000,
+            dist=1500,
             network_type=self.travel_mode.value,
         )
-        self.sync_path_from_user_to_target()
+        self.user_coordinate_during_latest_map_graph_generation = (
+            self.user_gps_coordinates
+        )
+        self.sync_path_from_user_to_pet()
+        self.update_map_update_message_label("")
 
-    def sync_path_from_user_to_target(self) -> None:
+    def sync_path_from_user_to_pet(self) -> None:
         if self.user_gps_coordinates is None:
             print("No user GPS coordinates")
             return
-        if self.target_gps_coordinates is None:
-            print("No target GPS coordinates")
+        if self.pet_gps_coordinates is None:
+            print("No pet GPS coordinates")
             return
+
+        if (
+            calc_distance_km(self.user_gps_coordinates, self.pet_gps_coordinates)
+            > MAX_DISTANCE_TO_pet_TO_SHOW_PATH_KM
+        ):
+            self.update_map_long_distance_message_text(
+                f"pet is distant then {MAX_DISTANCE_TO_pet_TO_SHOW_PATH_KM} km, parts of the path farther then that might not be displayed"
+            )
+        else:
+            self.update_map_long_distance_message_text("")
+
         new_latest_path = self.map_widget.set_path(
-            self.calculate_path(self.user_gps_coordinates, self.target_gps_coordinates)
+            self.calculate_path(self.user_gps_coordinates, self.pet_gps_coordinates)
         )
         if self.latest_path is not None:
             self.latest_path.delete()
@@ -321,7 +431,14 @@ class ApplicationGUI:
         for node in route:
             coordinates.append((G.nodes[node]["y"], G.nodes[node]["x"]))
 
-        return [start] + coordinates + [end]
+        result = [start] + coordinates
+        if calc_distance_km(start, end) <= MAX_DISTANCE_TO_pet_TO_SHOW_PATH_KM:
+            result += [end]
+        else:
+            # do not display the end point if it is too far, because it will display a path that is not accurate
+            pass
+
+        return result
 
     def run(self):
         self.window.mainloop()
@@ -334,15 +451,16 @@ if __name__ == "__main__":
     gui = ApplicationGUI()
 
     def simulate_updates():
-        time.sleep(0.1)
         gui.set_user_gps_coordinates((32.01487634797979, 34.77458326803195))
         time.sleep(1)
-        gui.update_target_gps_coordinates((32.01278924606207, 34.77908810682126))
+        gui.update_pet_gps_coordinates((32.01278924606207, 34.77908810682126))
         time.sleep(1)
-        # change target location just by a little
-        gui.update_target_gps_coordinates((32.01378924606217, 34.77908810682132))
+        # change pet location just by a little
+        gui.update_pet_gps_coordinates((32.01378924606217, 34.77908810682132))
         time.sleep(1)
-        gui.update_target_gps_coordinates((32.01478924606237, 34.77908810682136))
+        gui.update_pet_gps_coordinates((32.0047067, 34.7899158))
+        time.sleep(1)
+        gui.set_user_gps_coordinates((32.0069655, 34.7847542))
 
     threading.Thread(target=simulate_updates).start()
 
