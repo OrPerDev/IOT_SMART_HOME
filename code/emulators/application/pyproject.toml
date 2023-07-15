@@ -10,10 +10,8 @@ python = "^3.11"
 tk = "^0.1.0"
 tkintermapview = "^1.29"
 pyperclip = "^1.8.2"
-distance_calculator = { path = "../../shared/gps/distance_calculator" }
-osmnx = "^1.5.1"
-networkx = "^3.1"
-scikit-learn = "^1.3.0"
+distance_calculator = { path = "../../shared/location/distance_calculator" }
+route_calculator = { path = "../../shared/location/route_calculator" }
 pillow = "^10.0.0"
 
 

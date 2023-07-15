@@ -4,15 +4,7 @@ import os
 import tkintermapview
 from typing import Callable
 from distance_calculator import calc_distance_km
-import osmnx as ox
-import networkx as nx
-from enum import Enum
-
-
-class TravelMode(str, Enum):
-    WALKING = "walk"
-    DRIVING = "drive"
-
+from route_calculator import get_graph_from_point, calculate_shortest_path, TravelMode
 
 MAX_DISTANCE_TO_pet_TO_SHOW_PATH_KM = 1.0
 
@@ -26,21 +18,7 @@ class ApplicationGUI:
         self.window_height = 600
         self.window.geometry(f"{self.window_width}x{self.window_height}")
 
-        # markers
-        self.pet_marker_image = PIL.ImageTk.PhotoImage(
-            PIL.Image.open(
-                os.path.join(
-                    os.path.dirname(os.path.abspath(__file__)), "assets", "dog-area.png"
-                )
-            ).resize((50, 50))
-        )
-        self.user_marker_image = PIL.ImageTk.PhotoImage(
-            PIL.Image.open(
-                os.path.join(
-                    os.path.dirname(os.path.abspath(__file__)), "assets", "person.png"
-                )
-            ).resize((50, 50))
-        )
+        self.prepare_gps_marker_images()
 
         self.prepare_map_view_loading_indicator()
         self.prepare_map_update_message_label()
@@ -59,6 +37,22 @@ class ApplicationGUI:
         self.user_coordinate_during_latest_map_graph_generation = None
         self.latest_map_graph = None
         self.latest_path = None
+
+    def prepare_gps_marker_images(self):
+        self.pet_marker_image = PIL.ImageTk.PhotoImage(
+            PIL.Image.open(
+                os.path.join(
+                    os.path.dirname(os.path.abspath(__file__)), "assets", "dog-area.png"
+                )
+            ).resize((50, 50))
+        )
+        self.user_marker_image = PIL.ImageTk.PhotoImage(
+            PIL.Image.open(
+                os.path.join(
+                    os.path.dirname(os.path.abspath(__file__)), "assets", "person.png"
+                )
+            ).resize((50, 50))
+        )
 
     def prepare_map_view(self):
         center_x = self.window_width / 2
@@ -300,7 +294,7 @@ class ApplicationGUI:
         distance_in_km = calc_distance_km(
             self.user_gps_coordinates, self.pet_gps_coordinates
         )
-        text = f"Distance to pet: {distance_in_km:.2f} km"
+        text = f"Aerial Distance to pet: {distance_in_km:.2f} km"
         self.distance_to_pet_text_display.set(text)
 
     def set_user_gps_coordinates(self, coordinates: tuple[float, float]) -> None:
@@ -368,7 +362,8 @@ class ApplicationGUI:
         # calculate if we need to update the map graph
         if self.latest_map_graph is not None:
             if (
-                calc_distance_km(
+                self.user_coordinate_during_latest_map_graph_generation is not None
+                and calc_distance_km(
                     self.user_gps_coordinates,
                     self.user_coordinate_during_latest_map_graph_generation,
                 )
@@ -377,10 +372,10 @@ class ApplicationGUI:
                 return
         # update the map graph
         self.update_map_update_message_label("Updating map graph...")
-        self.latest_map_graph = ox.graph_from_point(
+        self.latest_map_graph = get_graph_from_point(
             center_point=self.user_gps_coordinates,
-            dist=1500,
-            network_type=self.travel_mode.value,
+            dist=int(MAX_DISTANCE_TO_pet_TO_SHOW_PATH_KM * 1000),
+            travel_mode=self.travel_mode,
         )
         self.user_coordinate_during_latest_map_graph_generation = (
             self.user_gps_coordinates
@@ -406,39 +401,19 @@ class ApplicationGUI:
         else:
             self.update_map_long_distance_message_text("")
 
+        if self.latest_map_graph is None:
+            print("No latest map graph")
+            return
         new_latest_path = self.map_widget.set_path(
-            self.calculate_path(self.user_gps_coordinates, self.pet_gps_coordinates)
+            calculate_shortest_path(
+                self.latest_map_graph,
+                self.user_gps_coordinates,
+                self.pet_gps_coordinates,
+            )
         )
         if self.latest_path is not None:
             self.latest_path.delete()
         self.latest_path = new_latest_path
-
-    def calculate_path(self, start: tuple[float, float], end: tuple[float, float]):
-        # get latest graph
-        if self.latest_map_graph is None:
-            print("No latest map graph")
-            return
-        G = self.latest_map_graph
-
-        # get closes graph nodes to origin and destination
-        orig_node = ox.distance.nearest_nodes(G, start[1], start[0])
-        destination_node = ox.distance.nearest_nodes(G, end[1], end[0])
-
-        # find shortest path based on travel time
-        route = nx.shortest_path(G, orig_node, destination_node, weight="travel_time")
-
-        coordinates = []
-        for node in route:
-            coordinates.append((G.nodes[node]["y"], G.nodes[node]["x"]))
-
-        result = [start] + coordinates
-        if calc_distance_km(start, end) <= MAX_DISTANCE_TO_pet_TO_SHOW_PATH_KM:
-            result += [end]
-        else:
-            # do not display the end point if it is too far, because it will display a path that is not accurate
-            pass
-
-        return result
 
     def run(self):
         self.window.mainloop()
