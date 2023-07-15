@@ -401,7 +401,7 @@ class ApplicationGUI:
             > MAX_DISTANCE_TO_pet_TO_SHOW_PATH_KM
         ):
             self.update_map_long_distance_message_text(
-                f"pet is distant then {MAX_DISTANCE_TO_pet_TO_SHOW_PATH_KM} km, parts of the path farther then that might not be displayed"
+                f"Pet distance limits path visibility; {MAX_DISTANCE_TO_pet_TO_SHOW_PATH_KM} km is accurate, rest shown as straight line for location."
             )
         else:
             self.update_map_long_distance_message_text("")
