@@ -2,6 +2,15 @@ import tkinter as tk
 import tkintermapview
 from typing import Callable
 from distance_calculator import calc_distance_km
+import osmnx as ox
+import networkx as nx
+import numpy as np
+from enum import Enum
+
+
+class TravelMode(str, Enum):
+    WALKING = "walk"
+    DRIVING = "drive"
 
 
 class ApplicationGUI:
@@ -23,6 +32,10 @@ class ApplicationGUI:
         self.target_gps_coordinates = None
         self.target_marker = None
 
+        self.travel_mode = TravelMode.WALKING
+        self.latest_map_graph = None
+        self.latest_path = None
+
     def prepare_map_view(self):
         center_x = self.window_width / 2
         center_y = self.window_height / 2
@@ -33,6 +46,7 @@ class ApplicationGUI:
         )
         self.map_widget.set_zoom(15)
         self.map_widget.pack()
+        self.display_map_widget(display=False)
 
     def prepare_map_view_controllers(self):
         center_x = self.window_width / 2
@@ -157,6 +171,14 @@ class ApplicationGUI:
 
         self.stop_recording_button["command"] = callback_wrapper
 
+    def display_map_widget(self, display: bool) -> None:
+        if display:
+            self.map_widget_label.place(
+                x=self.window_width / 2, y=self.window_height / 2, anchor="center"
+            )
+        else:
+            self.map_widget_label.place_forget()
+
     def toggle_recording_button(self, recording: bool) -> None:
         if recording:
             self.start_recording_button["state"] = "disabled"
@@ -181,6 +203,7 @@ class ApplicationGUI:
         self.target_gps_coordinates = coordinates
         self.render_target_gps_marker()
         self.update_distance_to_target_text_display()
+        self.sync_path_from_user_to_target()
 
     def update_distance_to_target_text_display(self) -> None:
         if self.target_gps_coordinates is None:
@@ -198,10 +221,13 @@ class ApplicationGUI:
     def set_user_gps_coordinates(self, coordinates: tuple[float, float]) -> None:
         first_coordinates_signal = self.user_gps_coordinates is None
         self.user_gps_coordinates = coordinates
+        self.update_map_graph()
         if first_coordinates_signal:
+            self.display_map_widget(display=True)
             self.center_to_user_gps_coordinates()
         self.render_user_gps_marker()
         self.update_distance_to_target_text_display()
+        self.sync_path_from_user_to_target()
 
     def render_target_gps_marker(self):
         if self.target_gps_coordinates is None:
@@ -242,6 +268,60 @@ class ApplicationGUI:
         self.map_widget.set_position(
             self.user_gps_coordinates[0], self.user_gps_coordinates[1]
         )
+
+    def update_map_graph(self) -> None:
+        if self.user_gps_coordinates is None:
+            print("No user GPS coordinates")
+            return
+        # calculate if we need to update the map graph
+        if self.latest_map_graph is not None:
+            if (
+                calc_distance_km(
+                    self.user_gps_coordinates, self.latest_map_graph.graph["center"]
+                )
+                < 0.5
+            ):
+                return
+        self.latest_map_graph = ox.graph_from_point(
+            center_point=self.user_gps_coordinates,
+            dist=1000,
+            network_type=self.travel_mode.value,
+        )
+        self.sync_path_from_user_to_target()
+
+    def sync_path_from_user_to_target(self) -> None:
+        if self.user_gps_coordinates is None:
+            print("No user GPS coordinates")
+            return
+        if self.target_gps_coordinates is None:
+            print("No target GPS coordinates")
+            return
+        new_latest_path = self.map_widget.set_path(
+            self.calculate_path(self.user_gps_coordinates, self.target_gps_coordinates)
+        )
+        if self.latest_path is not None:
+            self.latest_path.delete()
+        self.latest_path = new_latest_path
+
+    def calculate_path(self, start: tuple[float, float], end: tuple[float, float]):
+        # get latest graph
+        if self.latest_map_graph is None:
+            print("No latest map graph")
+            return
+        G = self.latest_map_graph
+
+        # get closes graph nodes to origin and destination
+        orig_node = ox.distance.nearest_nodes(G, start[1], start[0])
+        destination_node = ox.distance.nearest_nodes(G, end[1], end[0])
+
+        # find shortest path based on travel time
+        route = nx.shortest_path(G, orig_node, destination_node, weight="travel_time")
+
+        coordinates = []
+        for node in route:
+            coordinates.append((G.nodes[node]["y"], G.nodes[node]["x"]))
+
+        return [start] + coordinates + [end]
 
     def run(self):
         self.window.mainloop()
