@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "application"
+version = "0.1.0"
+description = ""
+authors = ["Shahar Tal <stalmail10@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+tk = "^0.1.0"
+tkintermapview = "^1.29"
+pyperclip = "^1.8.2"
+distance_calculator = { path = "../../shared/gps/distance_calculator" }
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
