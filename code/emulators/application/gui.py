@@ -305,7 +305,6 @@ class ApplicationGUI:
             self.display_map_widget(display=True)
             self.center_to_user_gps_coordinates()
         self.render_user_gps_marker()
-        self.center_to_user_gps_coordinates()
         self.update_distance_to_pet_text_display()
         self.sync_path_from_user_to_pet()
 
@@ -382,6 +381,7 @@ class ApplicationGUI:
         )
         self.sync_path_from_user_to_pet()
         self.update_map_update_message_label("")
+        self.center_to_user_gps_coordinates()
 
     def sync_path_from_user_to_pet(self) -> None:
         if self.user_gps_coordinates is None:
