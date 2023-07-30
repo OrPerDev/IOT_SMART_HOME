@@ -1,15 +1,31 @@
 from __future__ import annotations
 from typing import Protocol, TypeAlias, Optional
-from helpers import get_gps_location
-import time
 import threading
+import time
+import gpsd
 
 GpsLocation: TypeAlias = tuple[float, float]
-
 
 class OnNewLocationFn(Protocol):
     def __call__(self, location: GpsLocation) -> None:
         """Called when a new location is available"""
+
+
+def _get_gps_location() -> GpsLocation | None:
+    try:
+        gpsd.connect()
+        packet = gpsd.get_current()
+
+        if packet.mode >= 2 and packet.mode <= 3:
+            latitude, longitude = packet.position()
+            return latitude, longitude
+        else:
+            print("Unable to get a fix on GPS signal of device.")
+            return None
+
+    except Exception as e:
+        print("Error occurred while fetching GPS location:", str(e))
+        return None
 
 
 class GPSSensor:
@@ -27,7 +43,7 @@ class GPSSensor:
         self._running = True
         while self._running:
             time.sleep(self._interval_seconds)
-            self.location = get_gps_location()
+            self.location = _get_gps_location()
             if self.location is not None:
                 self._on_new_location(self.location)
 
