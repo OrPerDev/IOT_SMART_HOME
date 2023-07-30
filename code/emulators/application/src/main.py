@@ -1,9 +1,12 @@
 from gui import ApplicationGUI
-from gps import new_gps_sensor
-import threading
-import time
+from gps_sensor import new_gps_sensor
 import os
-from environment import GPS_SENSOR_MODE, COLLAR_ID, USER_LOCATION_SIMULATION_ROUTE_PATH
+from environment import (
+    GPS_SENSOR_MODE,
+    COLLAR_ID,
+    USER_LOCATION_SIMULATION_ROUTE_PATH,
+    PET_LOCATION_SIMULATION_ROUTE_PATH,
+)
 
 # TODO: add control to update the gps location of the pet and the user
 # based on the gps sensor emulator and based on MQTT messages
@@ -16,53 +19,15 @@ def absolute_path(relative_path: str) -> str:
     return os.path.join(os.path.dirname(__file__), relative_path)
 
 
-# TODO: remove this function as it will be replaced with the MQTT client messages
-def simulate_pet_location_updates(gui: ApplicationGUI) -> None:
-    route = [
-        (32.01487634797979, 34.77458326803195),
-        (32.0149811, 34.7746679),
-        (32.0149265, 34.7744101),
-        (32.0149538, 34.7740843),
-        (32.0150098, 34.7738474),
-        (32.0151482, 34.7735293),
-        (32.0154941, 34.7735227),
-        (32.0152926, 34.7752523),
-        (32.0149419, 34.7751958),
-        (32.0140609, 34.7750401),
-        (32.0139772, 34.7750268),
-        (32.0133498, 34.7749273),
-        (32.0131406, 34.7748846),
-        (32.0129575, 34.7748507),
-        (32.0129424, 34.7749537),
-        (32.0129288, 34.7750458),
-        (32.0128716, 34.7753262),
-        (32.0127684, 34.7758322),
-        (32.0122001, 34.7778245),
-        (32.0121043, 34.7781604),
-        (32.012074, 34.7782996),
-        (32.0119908, 34.7786277),
-        (32.0116604, 34.7799067),
-        (32.0112819, 34.7814543),
-        (32.011264, 34.7815245),
-        (32.0111919, 34.7818071),
-        (32.0111788, 34.7818546),
-        (32.0111394, 34.7820157),
-        (32.0104797, 34.7847098),
-        (32.0103897, 34.7850239),
-        (32.0101513, 34.785),
-        (32.0096797, 34.784959),
-        (32.0088765, 34.7848893),
-        (32.0081654, 34.7848077),
-        (32.0081482, 34.7848055),
-        (32.0078615, 34.7847688),
-        (32.0078172, 34.7847637),
-        (32.0072011, 34.7846925),
-        (32.0059571, 34.7845489),
-        (32.0047067, 34.7899158),
-    ]
-    for point in route:
-        gui.update_pet_gps_location(point)
-        time.sleep(1)
+def simulate_pet_location(gui: ApplicationGUI):
+    pet_gps_sensor = new_gps_sensor(
+        mode=GPS_SENSOR_MODE,
+        interval_seconds=1,
+        simulation_file_path=absolute_path(PET_LOCATION_SIMULATION_ROUTE_PATH),
+    )
+    pet_gps_sensor.on_new_location = gui.update_pet_gps_location
+
+    pet_gps_sensor.start()
 
 
 if __name__ == "__main__":
@@ -77,7 +42,9 @@ if __name__ == "__main__":
 
     user_gps_sensor.start()
 
-    threading.Thread(target=simulate_pet_location_updates, args=(gui,)).start()
+    # TODO: remove simulation of pet location
+    if GPS_SENSOR_MODE == "SIMULATION":
+        simulate_pet_location(gui=gui)
 
     # run gui
     gui.run()

@@ -1,4 +1,4 @@
-from gps import new_gps_sensor
+from gps_sensor import new_gps_sensor
 from updates_controller import UpdatesController
 import os
 from environment import COLLAR_ID, GPS_SENSOR_MODE, SIMULATION_ROUTE_PATH
