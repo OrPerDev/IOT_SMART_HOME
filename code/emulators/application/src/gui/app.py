@@ -27,10 +27,14 @@ class ApplicationGUI:
             embed_button=self.embed_button,
         )
 
-    def update_pet_gps_location(self, location: tuple[float, float]) -> None:
+    def update_pet_gps_location(self, location: tuple[float, float] | None) -> None:
+        if location is None:
+            return
         self.map_gui.update_pet_gps_coordinates(location)
 
-    def update_user_gps_location(self, location: tuple[float, float]) -> None:
+    def update_user_gps_location(self, location: tuple[float, float] | None) -> None:
+        if location is None:
+            return
         self.map_gui.update_user_gps_coordinates(location)
 
     @property

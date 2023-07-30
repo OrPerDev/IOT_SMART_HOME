@@ -7,11 +7,11 @@ import gpsd
 GpsLocation: TypeAlias = tuple[float, float]
 
 class OnNewLocationFn(Protocol):
-    def __call__(self, location: GpsLocation) -> None:
+    def __call__(self, location: Optional[GpsLocation]) -> None:
         """Called when a new location is available"""
 
 
-def _get_gps_location() -> GpsLocation | None:
+def _get_gps_location() -> Optional[GpsLocation]:
     try:
         gpsd.connect()
         packet = gpsd.get_current()
@@ -42,10 +42,8 @@ class GPSSensor:
     def _run(self):
         self._running = True
         while self._running:
+            self.set_location(_get_gps_location())
             time.sleep(self._interval_seconds)
-            self.location = _get_gps_location()
-            if self.location is not None:
-                self._on_new_location(self.location)
 
     def stop(self):
         self._running = False
@@ -60,7 +58,7 @@ class GPSSensor:
     def get_location(self) -> Optional[GpsLocation]:
         return self.location
 
-    def set_location(self, location: GpsLocation) -> None:
+    def set_location(self, location: Optional[GpsLocation]) -> None:
         self.location = location
         self._on_new_location(location)
 

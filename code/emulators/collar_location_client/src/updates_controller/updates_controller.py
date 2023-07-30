@@ -35,7 +35,9 @@ class UpdatesController:
 
         self.client.connect()
 
-    def on_gps_location_update(self, location: tuple[float, float]) -> None:
+    def on_gps_location_update(self, location: tuple[float, float] | None) -> None:
+        if location is None:
+            return
         buf = struct.pack("%sf" % len(location), *location)
         self.client.publish(
             topic=self.collar_location_topic,
