@@ -1,21 +1,15 @@
 from gui import ApplicationGUI
-from gps_sensor import GPSSensor
-from enum import Enum
+from gps import new_gps_sensor
 import threading
 import time
 import os
-from environment import MODE, COLLAR_ID, USER_LOCATION_SIMULATION_ROUTE_PATH
+from environment import GPS_SENSOR_MODE, COLLAR_ID, USER_LOCATION_SIMULATION_ROUTE_PATH
 
 # TODO: add control to update the gps location of the pet and the user
 # based on the gps sensor emulator and based on MQTT messages
 
 # TODO: add control to start and stop recording of audio
 # anyway, the control should send MQTT messages of the recorded audio
-
-
-class Mode(str, Enum):
-    SIMULATION = "SIMULATION"
-    AUTHENTIC = "AUTHENTIC"
 
 
 def absolute_path(relative_path: str) -> str:
@@ -71,40 +65,19 @@ def simulate_pet_location_updates(gui: ApplicationGUI) -> None:
         time.sleep(1)
 
 
-def simulate_user_gps_location_sensor_updates(gps_sensor: GPSSensor) -> None:
-    with open(absolute_path(USER_LOCATION_SIMULATION_ROUTE_PATH), "r") as f:
-        while True:
-            line = f.readline()
-            if not line:
-                break
-            # line is float,float
-            location = tuple([float(val.strip()) for val in line.strip().split(",")])
-            if len(location) != 2:
-                raise RuntimeError(f"Invalid GPS location line: {line}")
-            print(f"[Simulation]: Producing new user location: {location}")
-            gps_sensor.set_location(location=location)
-            time.sleep(1.2)
-
-
 if __name__ == "__main__":
     gui = ApplicationGUI()
 
-    gps_sensor = GPSSensor(interval_seconds=1)
-    gps_sensor.on_new_location = gui.update_user_gps_location
+    user_gps_sensor = new_gps_sensor(
+        mode=GPS_SENSOR_MODE,
+        interval_seconds=1.2,
+        simulation_file_path=absolute_path(USER_LOCATION_SIMULATION_ROUTE_PATH),
+    )
+    user_gps_sensor.on_new_location = gui.update_user_gps_location
 
-    if MODE == Mode.AUTHENTIC:
-        print("Authentic Mode Start")
-        # let the gps sensor handle it natively
-        gps_sensor.start()
-    elif MODE == Mode.SIMULATION:
-        # run simulation
-        print("Simulation Mode Start")
-        threading.Thread(
-            target=simulate_user_gps_location_sensor_updates, args=(gps_sensor,)
-        ).start()
-        threading.Thread(target=simulate_pet_location_updates, args=(gui,)).start()
-    else:
-        raise EnvironmentError(f"Unsupported script mode: {MODE}")
+    user_gps_sensor.start()
+
+    threading.Thread(target=simulate_pet_location_updates, args=(gui,)).start()
 
     # run gui
     gui.run()

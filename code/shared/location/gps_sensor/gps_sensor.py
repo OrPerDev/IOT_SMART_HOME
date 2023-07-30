@@ -29,7 +29,7 @@ def _get_gps_location() -> Optional[GpsLocation]:
 
 
 class GPSSensor:
-    def __init__(self, interval_seconds: int = 1):
+    def __init__(self, interval_seconds: float = 1.0):
         self.location = None
         self._on_new_location = lambda location: None
 
