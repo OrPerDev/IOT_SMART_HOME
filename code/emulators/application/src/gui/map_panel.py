@@ -148,7 +148,7 @@ class MapPanelGUI:
 
     def prepare_distance_to_pet_label(self):
         self.distance_to_pet_text_display = self.embed_text(
-            text="Waiting for data...",
+            text="Pet location is unavailable...",
             x=self.window_width / 2,
             y=self.window_height / 2 - 200,
         )

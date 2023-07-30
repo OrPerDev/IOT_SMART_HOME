@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "collar-location-client"
+name = "gps-sensor"
 version = "0.1.0"
 description = ""
 authors = [
@@ -9,8 +9,7 @@ authors = [
 
 [tool.poetry.dependencies]
 python = "^3.11"
-instant-mqtt-client = { path = "../../shared/mqtt/instant_mqtt_client" }
-gps-sensor = { path = "../../shared/location/gps_sensor" }
+gpsd-py3 = "^0.3.0"
 
 
 [build-system]

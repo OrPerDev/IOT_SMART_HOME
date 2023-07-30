@@ -317,6 +317,32 @@ pyproj = ">=3.0.1"
 shapely = ">=1.7.1"
 
 [[package]]
+name = "gps-sensor"
+version = "0.1.0"
+description = ""
+optional = false
+python-versions = "^3.11"
+files = []
+develop = false
+
+[package.dependencies]
+gpsd-py3 = "^0.3.0"
+
+[package.source]
+type = "directory"
+url = "../../shared/location/gps_sensor"
+
+[[package]]
+name = "gpsd-py3"
+version = "0.3.0"
+description = "Python 3 library for working with gpsd"
+optional = false
+python-versions = "*"
+files = [
+    {file = "gpsd-py3-0.3.0.tar.gz", hash = "sha256:2908d3bd78dfb6720ecfe22f97e139b5a4a198f38df3a77215cf644a33513192"},
+]
+
+[[package]]
 name = "idna"
 version = "3.4"
 description = "Internationalized Domain Names in Applications (IDNA)"
@@ -972,4 +998,4 @@ zstd = ["zstandard (>=0.18.0)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "e9b05ce1605b129b0db2cc8ab59c760afd04e899512f24711ba9131905b5c8ca"
+content-hash = "8c5d68d9858e1d004320800c75faeab53998fd004439f7312dfeda3279d698ab"

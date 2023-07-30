@@ -26,6 +26,32 @@ files = [
 testing = ["hatch", "pre-commit", "pytest", "tox"]
 
 [[package]]
+name = "gps-sensor"
+version = "0.1.0"
+description = ""
+optional = false
+python-versions = "^3.11"
+files = []
+develop = false
+
+[package.dependencies]
+gpsd-py3 = "^0.3.0"
+
+[package.source]
+type = "directory"
+url = "../../shared/location/gps_sensor"
+
+[[package]]
+name = "gpsd-py3"
+version = "0.3.0"
+description = "Python 3 library for working with gpsd"
+optional = false
+python-versions = "*"
+files = [
+    {file = "gpsd-py3-0.3.0.tar.gz", hash = "sha256:2908d3bd78dfb6720ecfe22f97e139b5a4a198f38df3a77215cf644a33513192"},
+]
+
+[[package]]
 name = "iniconfig"
 version = "2.0.0"
 description = "brain-dead simple config-ini parsing"
@@ -203,4 +229,4 @@ testing = ["filelock"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "537c45d3b879e2b16f3cd2d5400705b7fcc616430a5de90f1da8c3fff53d4669"
+content-hash = "6004eec893fcea1c0e150f7bc6cce09f0ac628fde22994f043d1cad59df9e4b4"
