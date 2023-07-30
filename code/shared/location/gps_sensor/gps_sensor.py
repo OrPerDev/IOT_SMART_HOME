@@ -59,6 +59,9 @@ class GPSSensor:
         return self.location
 
     def set_location(self, location: Optional[GpsLocation]) -> None:
+        if location == self.location:
+            # no change - do nothing
+            return
         self.location = location
         self._on_new_location(location)
 
