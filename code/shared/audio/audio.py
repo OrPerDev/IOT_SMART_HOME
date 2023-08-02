@@ -19,7 +19,11 @@ class AudioDeviceController:
 
         return in_data, pyaudio.paContinue
 
+    def clear_frames(self) -> None:
+        self.frames = []
+
     def start_recording(self) -> None:
+        self.clear_frames()
         self.stream = self.audio.open(
             format=pyaudio.paInt16,
             channels=1,
@@ -28,7 +32,6 @@ class AudioDeviceController:
             frames_per_buffer=1024,
             stream_callback=self._recording_callback,
         )
-        self.frames = []  # Clear previous frames
 
     def stop_recording(self) -> None:
         print("Recording stopped...")
@@ -66,7 +69,3 @@ class AudioDeviceController:
 
     def close(self) -> None:
         self.audio.terminate()
-
-    def reset(self) -> None:
-        self.close()
-        self.__init__()

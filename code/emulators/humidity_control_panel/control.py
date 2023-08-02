@@ -42,7 +42,9 @@ class HumidityController:
             connection_config=MQTTConnectionConfig(
                 host=broker, port=port, keepalive=90
             ),
-            behavior_config=MQTTClientBehaviorConfig(listen_automatically=True,),
+            behavior_config=MQTTClientBehaviorConfig(
+                listen_automatically=True,
+            ),
         )
 
         self.humidity_sensor_status_topic = (

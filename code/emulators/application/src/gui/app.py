@@ -39,19 +39,35 @@ class ApplicationGUI:
 
     @property
     def on_start_recording_callback(self) -> Callable:
-        return self.record_control_gui.on_start_recording_callback
+        return self.record_control_gui._on_start_recording_callback
 
     @on_start_recording_callback.setter
     def on_start_recording_callback(self, callback: Callable) -> None:
-        self.record_control_gui.on_start_recording_callback = callback
+        self.record_control_gui._on_start_recording_callback = callback
 
     @property
     def on_stop_recording_callback(self) -> Callable:
-        return self.record_control_gui.on_stop_recording_callback
+        return self.record_control_gui._on_stop_recording_callback
 
     @on_stop_recording_callback.setter
     def on_stop_recording_callback(self, callback: Callable) -> None:
-        self.record_control_gui.on_stop_recording_callback = callback
+        self.record_control_gui._on_stop_recording_callback = callback
+
+    @property
+    def on_send_record_command(self) -> Callable:
+        return self.record_control_gui._on_send_record_command
+
+    @on_send_record_command.setter
+    def on_send_record_command(self, callback: Callable) -> None:
+        self.record_control_gui._on_send_record_command = callback
+
+    @property
+    def on_cancel_record_command(self) -> Callable:
+        return self.record_control_gui._on_cancel_record_command
+
+    @on_cancel_record_command.setter
+    def on_cancel_record_command(self, callback: Callable) -> None:
+        self.record_control_gui._on_cancel_record_command = callback
 
     def run(self):
         self.window.mainloop()

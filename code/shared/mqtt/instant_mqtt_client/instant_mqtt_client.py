@@ -120,7 +120,10 @@ class InstantMQTTClient(mqtt.Client):
         properties: MQTTProperties | None = None,
     ) -> tuple[int, int]:
         result: tuple[int, int] = super().subscribe(
-            topic=topic, qos=qos, options=options, properties=properties,
+            topic=topic,
+            qos=qos,
+            options=options,
+            properties=properties,
         )
         if result[0] != mqtt.MQTT_ERR_SUCCESS:
             return result
@@ -130,10 +133,13 @@ class InstantMQTTClient(mqtt.Client):
         return result
 
     def unsubscribe(
-        self, topic: str, properties: MQTTProperties | None = None,
+        self,
+        topic: str,
+        properties: MQTTProperties | None = None,
     ) -> tuple[int, int]:
         result: tuple[int, int] = super().unsubscribe(
-            topic=topic, properties=properties,
+            topic=topic,
+            properties=properties,
         )
         if result[0] != mqtt.MQTT_ERR_SUCCESS:
             return result
