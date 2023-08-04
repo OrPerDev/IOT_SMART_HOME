@@ -10,7 +10,9 @@ MAX_DISTANCE_TO_pet_TO_SHOW_PATH_KM = 1.0
 
 
 class EmbedButtonFn(Protocol):
-    def __call__(self, command: Callable, text: str, x: float, y: float) -> tk.Button:
+    def __call__(
+        self, command: Callable, text: str, x: float, y: float, **kwargs
+    ) -> tk.Button:
         ...
 
 
@@ -39,6 +41,11 @@ class MapPanelGUI:
         self.embed_text = embed_text
         self.window_width = window_width
         self.window_height = window_height
+
+        self.map_location_x = 0
+        self.map_location_y = 0
+        self.map_width = int(self.window_width / 2)
+        self.map_height = int(self.window_height / 2)
 
         self.prepare_gps_marker_images()
         self.prepare_map_view_loading_indicator()
@@ -76,14 +83,14 @@ class MapPanelGUI:
         )
 
     def prepare_map_view(self):
-        center_x = self.window_width / 2
-        center_y = self.window_height / 2
         self.map_widget_label = tk.LabelFrame(self.window, text="Map")
-        self.map_widget_label.place(x=center_x, y=center_y, anchor="center")
+        self.map_widget_label.place(
+            x=self.map_location_x, y=self.map_location_y, anchor="nw"
+        )
         self.map_widget = tkintermapview.TkinterMapView(
             self.map_widget_label,
-            width=400,
-            height=300,
+            width=self.map_width,
+            height=self.map_height,
             corner_radius=0,
         )
         self.map_widget.set_zoom(15)
@@ -92,38 +99,35 @@ class MapPanelGUI:
         self.display_map_widget(display=False)
 
     def prepare_map_view_controllers(self):
-        center_x = self.window_width / 2
-        center_y = self.window_height / 2
-
-        center_buttons_x = center_x + 300
-        y_offet = 50
-
         self.center_to_pet_button = self.embed_button(
             command=self.center_to_pet_gps_coordinates,
             text="Center to pet",
-            x=center_buttons_x,
-            y=center_y - y_offet,
+            x=self.map_location_x + 10,
+            y=self.map_location_y + self.map_height + 100,
+            anchor="nw",
         )
 
         self.center_to_user_button = self.embed_button(
             command=self.center_to_user_gps_coordinates,
             text="Center to user",
-            x=center_buttons_x + 5,
-            y=center_y,
+            x=self.map_location_x + 175,
+            y=self.map_location_y + self.map_height + 100,
+            anchor="nw",
         )
 
         self.route_visibility_button = self.embed_button(
             command=self.toggle_route_visibility,
             text="Route view control",
-            x=center_buttons_x + 21,
-            y=center_y + y_offet,
+            x=self.map_location_x + 10,
+            y=self.map_location_y + self.map_height + 150,
+            anchor="nw",
         )
 
     def prepare_map_view_loading_indicator(self):
         self.map_loading_indicator_text_display = self.embed_text(
             text="Loading map...",
-            x=self.window_width / 2,
-            y=self.window_height / 2 - 200,
+            x=self.map_location_x + self.window_width / 2,
+            y=self.map_location_y + self.window_height / 2,
         )
 
     def update_map_update_message_label(self, message: str):
@@ -132,8 +136,8 @@ class MapPanelGUI:
     def prepare_map_update_message_label(self):
         self.map_update_message_text_display = self.embed_text(
             text="",
-            x=self.window_width / 2,
-            y=self.window_height / 2 + 205,
+            x=self.map_location_x + self.map_width / 2,
+            y=self.map_location_y + self.map_height + 80,
         )
 
     def update_map_long_distance_message_text(self, message: str) -> None:
@@ -143,14 +147,14 @@ class MapPanelGUI:
         self.map_long_distance_message_text_display = self.embed_text(
             text="",
             x=self.window_width / 2,
-            y=self.window_height / 2 + 175,
+            y=self.window_height - 50,
         )
 
     def prepare_distance_to_pet_label(self):
         self.distance_to_pet_text_display = self.embed_text(
             text="Pet location is unavailable...",
-            x=self.window_width / 2,
-            y=self.window_height / 2 - 200,
+            x=self.map_location_x + self.map_width / 2,
+            y=self.map_location_y + self.map_height + 50,
         )
 
     def display_map_widget(self, display: bool) -> None:
@@ -175,7 +179,10 @@ class MapPanelGUI:
         distance_in_km = calc_distance_km(
             self.user_gps_coordinates, self.pet_gps_coordinates
         )
-        text = f"Aerial Distance to pet: {distance_in_km:.2f} km"
+        if distance_in_km < float(f"{0:.3f}9"):
+            text = "You have reached your pet!"
+        else:
+            text = f"Aerial Distance to pet: {distance_in_km:.3f} km"
         self.distance_to_pet_text_display.set(text)
 
     def update_user_gps_coordinates(self, coordinates: tuple[float, float]) -> None:
