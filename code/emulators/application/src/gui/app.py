@@ -10,7 +10,7 @@ from .record_control import (
 class ApplicationGUI:
     def __init__(self):
         self.window = tk.Tk()
-        self.window.title("Application")
+        self.window.title("Smart Collar")
         self.window.configure(bg="#222")
         self.window_width = 800
         self.window_height = 600

@@ -101,7 +101,7 @@ class MapPanelGUI:
     def prepare_map_view_controllers(self):
         self.center_to_pet_button = self.embed_button(
             command=self.center_to_pet_gps_coordinates,
-            text="Center to pet",
+            text="🎯 Center to pet",
             x=self.map_location_x + 10,
             y=self.map_location_y + self.map_height + 100,
             anchor="nw",
@@ -109,7 +109,7 @@ class MapPanelGUI:
 
         self.center_to_user_button = self.embed_button(
             command=self.center_to_user_gps_coordinates,
-            text="Center to user",
+            text="🎯 Center to user",
             x=self.map_location_x + 175,
             y=self.map_location_y + self.map_height + 100,
             anchor="nw",
@@ -117,7 +117,7 @@ class MapPanelGUI:
 
         self.route_visibility_button = self.embed_button(
             command=self.toggle_route_visibility,
-            text="Route view control",
+            text="🧭 Show/Hide route",
             x=self.map_location_x + 10,
             y=self.map_location_y + self.map_height + 150,
             anchor="nw",
@@ -309,9 +309,14 @@ class MapPanelGUI:
         self.latest_path = new_latest_path
 
     def toggle_route_visibility(self) -> None:
-        self.route_visibility = not self.route_visibility
         if self.latest_path is not None:
             self.latest_path.delete()
             self.latest_path = None
+
+        if self.pet_gps_coordinates is None:
+            print("Cannot toggle route visibility: no pet GPS coordinates")
+            return
+
+        self.route_visibility = not self.route_visibility
         if self.route_visibility:
             self.sync_path_from_user_to_pet()

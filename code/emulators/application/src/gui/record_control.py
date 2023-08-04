@@ -93,7 +93,7 @@ class RecordControlGUI:
         self.edit_name_input_box = tk.Text(
             self.window,
             height=1,
-            width=20,
+            width=30,
         )
 
         self.toggle_record_name_edit_input_box(disabled=True)
@@ -108,10 +108,15 @@ class RecordControlGUI:
         else:
             self.edit_name_input_box.place(
                 x=self.section_x_center,
-                y=self.section_y + 300,
+                y=self.section_y + 250,
                 anchor=tk.CENTER,
             )
             self.edit_name_input_box.config(state=tk.NORMAL)
+            if self.selected_audio_record is not None:
+                self.edit_name_input_box.delete("1.0", tk.END)
+                self.edit_name_input_box.insert(
+                    tk.END, str(self.selected_audio_record.name).strip()
+                )
 
     def create_lb_scollbar(self):
         if self.lb_scrollbar is not None:
@@ -197,7 +202,7 @@ class RecordControlGUI:
     def prepare_delete_button(self):
         self.delete_button = self.embed_button(
             command=lambda: print("Delete"),
-            text="Delete",
+            text="🗑️ Delete",
             x=0,
             y=0,
         )
@@ -209,7 +214,7 @@ class RecordControlGUI:
     def prepare_update_name_button(self):
         self.update_name_button = self.embed_button(
             command=lambda: print("Update"),
-            text="Update",
+            text="🖊️ Update",
             x=0,
             y=0,
         )
@@ -235,7 +240,7 @@ class RecordControlGUI:
     def prepare_send_button(self):
         self.send_button = self.embed_button(
             command=lambda: print("Send"),
-            text="Send",
+            text="📦 Send",
             x=0,
             y=0,
         )
@@ -246,7 +251,7 @@ class RecordControlGUI:
     def prepare_play_button(self):
         self.play_button = self.embed_button(
             command=lambda: print("Play"),
-            text="Play",
+            text="🔊 Play",
             x=0,
             y=0,
         )
@@ -334,7 +339,7 @@ class RecordControlGUI:
         self.update_audio_records_list()
 
     def update_record_control_button_to_recording_mode(self) -> None:
-        self.record_control_button["text"] = "Stop recording"
+        self.record_control_button["text"] = "🛑 Stop recording"
         self.record_control_button[
             "command"
         ] = lambda: self.record_control_button_command_wrapper(
@@ -342,7 +347,7 @@ class RecordControlGUI:
         )
 
     def update_record_control_button_to_not_recording_mode(self) -> None:
-        self.record_control_button["text"] = "Record audio"
+        self.record_control_button["text"] = "🎤 Record audio"
         self.record_control_button[
             "command"
         ] = lambda: self.record_control_button_command_wrapper(
@@ -373,11 +378,11 @@ class RecordControlGUI:
 
     def update_audio_choice_controllers_visibility(self, display: bool = True):
         if display:
-            button_offset = 35
+            button_offset = 40
             button_y_location = self.section_y + 30 + 90
             # make visible self.send_button
             self.send_button.place(
-                width=70,
+                width=80,
                 height=30,
                 x=self.section_x_center - button_offset * 3,
                 y=button_y_location,
@@ -385,7 +390,7 @@ class RecordControlGUI:
             )
             # make visible self.play_button
             self.play_button.place(
-                width=70,
+                width=80,
                 height=30,
                 x=self.section_x_center - button_offset * 1,
                 y=button_y_location,
@@ -393,7 +398,7 @@ class RecordControlGUI:
             )
             # make visible self.update_name_button
             self.update_name_button.place(
-                width=70,
+                width=80,
                 height=30,
                 x=self.section_x_center + button_offset * 1,
                 y=button_y_location,
@@ -401,7 +406,7 @@ class RecordControlGUI:
             )
             # make visible self.delete_button
             self.delete_button.place(
-                width=70,
+                width=80,
                 height=30,
                 x=self.section_x_center + button_offset * 3,
                 y=button_y_location,
