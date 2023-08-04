@@ -70,7 +70,6 @@ class GPSSensor:
     def stop(self):
         self._running = False
         if self._thread is not None:
-            self._thread.join()
             self._thread = None
 
     def start(self):
@@ -121,9 +120,6 @@ class LocationSimulator(GPSSensor):
 
     def stop(self) -> None:
         self._running = False
-        if self._thread is not None:
-            self._thread.join()
-            self._thread = None
 
     def _read_simulation_file(self):
         if self.simulation_file_path is None:

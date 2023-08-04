@@ -12,7 +12,6 @@ python = "^3.11"
 instant-mqtt-client = { path = "../../shared/mqtt/instant_mqtt_client" }
 gps-sensor = { path = "../../shared/location/gps_sensor" }
 
-
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"

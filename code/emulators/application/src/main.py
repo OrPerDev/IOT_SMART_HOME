@@ -1,37 +1,29 @@
 from gui import ApplicationGUI
-from gps_sensor import new_gps_sensor, GPSMode
+from gps_sensor import new_gps_sensor
 from audio import AudioDeviceController
+from network_interface import NetworkInterface
 from functools import partial
-import os
-from environment import (
+from common.environment import (
     APPLICATION_GPS_SENSOR_CONFIG,
-    PET_GPS_SENSOR_CONFIG,
     COLLAR_ID,
 )
 
 
-def absolute_path(relative_path: str) -> str:
-    return os.path.join(os.path.dirname(__file__), relative_path)
-
-
-def simulate_pet_location(gui: ApplicationGUI) -> None:
-    if PET_GPS_SENSOR_CONFIG["mode"] != GPSMode.SIMULATION:
-        return
-    pet_gps_sensor = new_gps_sensor(**PET_GPS_SENSOR_CONFIG)
-    pet_gps_sensor.on_new_location = gui.update_pet_gps_location
-
-    pet_gps_sensor.start()
-
-
-def send_audio_to_server(audio_controller: AudioDeviceController) -> None:
+def send_audio_to_server(
+    audio_controller: AudioDeviceController, network_interface: NetworkInterface
+):
     audio: bytes = audio_controller.get_audio()
-    print(audio)
-    # TODO: send audio to server
-    print("audio sent to server")
+    print("Sending audio to server")
+    network_interface.on_send_voice_message(audio)
 
 
 if __name__ == "__main__":
     gui = ApplicationGUI()
+
+    # network interface (mqtt)
+    network_interface = NetworkInterface(collar_id=COLLAR_ID)
+    network_interface.on_new_gps_location = gui.update_pet_gps_location
+    network_interface.start()
 
     # audio
     audio_controller = AudioDeviceController()
@@ -39,7 +31,9 @@ if __name__ == "__main__":
     gui.on_start_recording_callback = audio_controller.start_recording
     gui.on_stop_recording_callback = audio_controller.stop_recording
     gui.on_send_record_command = partial(
-        send_audio_to_server, audio_controller=audio_controller
+        send_audio_to_server,
+        audio_controller=audio_controller,
+        network_interface=network_interface,
     )
     gui.on_cancel_record_command = audio_controller.clear_frames
 
@@ -50,8 +44,7 @@ if __name__ == "__main__":
     # start gps sensor
     user_gps_sensor.start()
 
-    # TODO: remove simulation of pet location
-    simulate_pet_location(gui=gui)
-
     # run gui
     gui.run()
+
+    network_interface.stop()

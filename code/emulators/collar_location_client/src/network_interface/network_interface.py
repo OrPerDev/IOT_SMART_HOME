@@ -7,15 +7,16 @@ from instant_mqtt_client import (
 )
 import struct
 import uuid
-from constants import (
+from common.constants import (
     MQTT_BROKER_HOST,
     MQTT_BROKER_PORT,
     MQTT_COLLAR_TOPIC,
     MQTT_COLLAR_LOCATION_CLIENT_ID_PREFIX,
+    TopicDataType,
 )
 
 
-class UpdatesController:
+class NetworkInterface:
     def __init__(self, collar_id: str):
         self.collar_id = collar_id
 
@@ -31,7 +32,9 @@ class UpdatesController:
             ),
         )
 
-        self.collar_location_topic = f"{MQTT_COLLAR_TOPIC}/{self.collar_id}/location"
+        self.collar_location_topic = (
+            f"{MQTT_COLLAR_TOPIC}/{self.collar_id}/{TopicDataType.LOCATION}"
+        )
 
         self.client.connect()
 
