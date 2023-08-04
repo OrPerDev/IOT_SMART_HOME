@@ -45,17 +45,20 @@ class RecordControlGUI:
         self._on_stop_recording_callback = lambda *args, **kwargs: print(
             "Stop recording"
         )
-        self._on_send_record_command = lambda *args, **kwargs: print("Send record")
-        self._on_delete_record_command = lambda *args, **kwargs: print("Delete record")
-
+        self._on_send_audio_record_callback = lambda *args, **kwargs: print(
+            "Send record"
+        )
+        self._on_delete_audio_record_callback = lambda *args, **kwargs: print(
+            "Delete record"
+        )
         self._on_save_audio_record_callback = lambda *args, **kwargs: print(
             "Save audio record"
         )
-        self._on_delete_audio_record_callback = lambda *args, **kwargs: print(
-            "Delete audio record"
-        )
         self._on_update_audio_record_name_callback = lambda *args, **kwargs: print(
             "Update audio record name"
+        )
+        self._on_play_audio_record_callback = lambda *args, **kwargs: print(
+            "Play audio record"
         )
         self._on_fetch_audio_records_callback = lambda: []
 
@@ -80,6 +83,7 @@ class RecordControlGUI:
         self.prepare_recording_control_button()
         self.prepare_delete_button()
         self.prepare_send_button()
+        self.prepare_play_button()
         self.prepare_update_name_button()
 
         self.toggle_recording_button(target_is_recording=self.is_recording)
@@ -199,7 +203,7 @@ class RecordControlGUI:
         )
 
         self.delete_button["command"] = lambda: self.audio_choice_command_wrapper(
-            self._on_delete_record_command
+            self._on_delete_audio_record_callback
         )
 
     def prepare_update_name_button(self):
@@ -236,7 +240,18 @@ class RecordControlGUI:
             y=0,
         )
         self.send_button["command"] = lambda: self.audio_choice_command_wrapper(
-            self._on_send_record_command
+            self._on_send_audio_record_callback
+        )
+
+    def prepare_play_button(self):
+        self.play_button = self.embed_button(
+            command=lambda: print("Play"),
+            text="Play",
+            x=0,
+            y=0,
+        )
+        self.play_button["command"] = lambda: self.audio_choice_command_wrapper(
+            self._on_play_audio_record_callback
         )
 
     @property
@@ -256,28 +271,20 @@ class RecordControlGUI:
         self._on_stop_recording_callback = callback
 
     @property
-    def on_send_record_command(self) -> AudioRecordActionFn:
-        return self._on_send_record_command
+    def on_play_audio_record_callback(self) -> AudioRecordActionFn:
+        return self._on_play_audio_record_callback
 
-    @on_send_record_command.setter
-    def on_send_record_command(self, callback: AudioRecordActionFn) -> None:
-        self._on_send_record_command = callback
-
-    @property
-    def on_delete_record_command(self) -> AudioRecordActionFn:
-        return self._on_delete_record_command
-
-    @on_delete_record_command.setter
-    def on_delete_record_command(self, callback: AudioRecordActionFn) -> None:
-        self._on_delete_record_command = callback
+    @on_play_audio_record_callback.setter
+    def on_play_audio_record_callback(self, callback: AudioRecordActionFn) -> None:
+        self._on_play_audio_record_callback = callback
 
     @property
-    def on_save_audio_record_callback(self) -> Callable:
-        return self._on_save_audio_record_callback
+    def on_send_audio_record_callback(self) -> AudioRecordActionFn:
+        return self._on_send_audio_record_callback
 
-    @on_save_audio_record_callback.setter
-    def on_save_audio_record_callback(self, callback: Callable) -> None:
-        self._on_save_audio_record_callback = callback
+    @on_send_audio_record_callback.setter
+    def on_send_audio_record_callback(self, callback: AudioRecordActionFn) -> None:
+        self._on_send_audio_record_callback = callback
 
     @property
     def on_delete_audio_record_callback(self) -> AudioRecordActionFn:
@@ -286,6 +293,14 @@ class RecordControlGUI:
     @on_delete_audio_record_callback.setter
     def on_delete_audio_record_callback(self, callback: AudioRecordActionFn) -> None:
         self._on_delete_audio_record_callback = callback
+
+    @property
+    def on_save_audio_record_callback(self) -> Callable:
+        return self._on_save_audio_record_callback
+
+    @on_save_audio_record_callback.setter
+    def on_save_audio_record_callback(self, callback: Callable) -> None:
+        self._on_save_audio_record_callback = callback
 
     @property
     def on_update_audio_record_name_callback(self) -> AudioRecordActionFn:
@@ -358,13 +373,21 @@ class RecordControlGUI:
 
     def update_audio_choice_controllers_visibility(self, display: bool = True):
         if display:
-            button_offset = 15 + 30 + 15
+            button_offset = 35
             button_y_location = self.section_y + 30 + 90
             # make visible self.send_button
             self.send_button.place(
                 width=70,
                 height=30,
-                x=self.section_x_center - button_offset,
+                x=self.section_x_center - button_offset * 3,
+                y=button_y_location,
+                anchor=tk.CENTER,
+            )
+            # make visible self.play_button
+            self.play_button.place(
+                width=70,
+                height=30,
+                x=self.section_x_center - button_offset * 1,
                 y=button_y_location,
                 anchor=tk.CENTER,
             )
@@ -372,7 +395,7 @@ class RecordControlGUI:
             self.update_name_button.place(
                 width=70,
                 height=30,
-                x=self.section_x_center,
+                x=self.section_x_center + button_offset * 1,
                 y=button_y_location,
                 anchor=tk.CENTER,
             )
@@ -380,7 +403,7 @@ class RecordControlGUI:
             self.delete_button.place(
                 width=70,
                 height=30,
-                x=self.section_x_center + button_offset,
+                x=self.section_x_center + button_offset * 3,
                 y=button_y_location,
                 anchor=tk.CENTER,
             )
@@ -391,3 +414,5 @@ class RecordControlGUI:
             self.send_button.place_forget()
             # make invisible self.update_name_button
             self.update_name_button.place_forget()
+            # make invisible self.play_button
+            self.play_button.place_forget()

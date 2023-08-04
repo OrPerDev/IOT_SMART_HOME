@@ -13,8 +13,10 @@ def bind_newtork_interface_to_gui_events(
     # bind gui events to network interface (to display received data)
     network_interface.on_new_gps_location = gui.update_pet_gps_location
     # bind network interface events to gui (to send data)
-    gui.on_send_record_command = lambda record: network_interface.on_send_voice_message(
-        voice_message=record.audio_data
+    gui.on_send_audio_record_callback = (
+        lambda record: network_interface.on_send_voice_message(
+            voice_message=record.audio_data
+        )
     )
 
 
@@ -27,7 +29,7 @@ def bind_dal_to_gui_events(
     gui.on_save_audio_record_callback = lambda: audio_record_repository.store_record(
         record=AudioRecord(audio_data=audio_controller.get_audio())
     )
-    gui.on_delete_record_command = audio_record_repository.delete_record
+    gui.on_delete_audio_record_callback = audio_record_repository.delete_record
     gui.on_update_audio_record_name_callback = (
         audio_record_repository.update_record_name
     )
@@ -41,6 +43,9 @@ def bind_audio_controller_to_gui_events(
     # bind audio controller to gui (to start/stop recording)
     gui.on_start_recording_callback = audio_controller.start_recording
     gui.on_stop_recording_callback = audio_controller.stop_recording
+    gui.on_play_audio_record_callback = lambda record: audio_controller.play_audio(
+        audio_data=record.audio_data
+    )
 
 
 def bind_gui_to_user_gps_sensor(gui: ApplicationGUI, user_gps_sensor: GPSSensor):
