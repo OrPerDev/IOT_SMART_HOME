@@ -28,4 +28,4 @@ if __name__ == "__main__":
     network_interface.start()
 
     while True:
-        time.sleep(5)
+        time.sleep(60)
