@@ -38,12 +38,13 @@ def bind_dal_to_gui_events(
 def bind_audio_controller_to_gui_events(
     gui: ApplicationGUI, audio_controller: AudioDeviceController
 ):
-    # bind gui events to audio controller (to manipulate media stream state)
+    # bind audio controller to gui (to start/stop recording)
     gui.on_start_recording_callback = audio_controller.start_recording
     gui.on_stop_recording_callback = audio_controller.stop_recording
 
 
-def bind_gps_sensor_to_gui_events(gui: ApplicationGUI, user_gps_sensor: GPSSensor):
+def bind_gui_to_user_gps_sensor(gui: ApplicationGUI, user_gps_sensor: GPSSensor):
+    # bind gui to user gps sensor (to display current location)
     user_gps_sensor.on_new_location = gui.update_user_gps_location
 
 
@@ -65,7 +66,7 @@ def main():
 
     bind_audio_controller_to_gui_events(gui=gui, audio_controller=audio_controller)
 
-    bind_gps_sensor_to_gui_events(gui=gui, user_gps_sensor=user_gps_sensor)
+    bind_gui_to_user_gps_sensor(gui=gui, user_gps_sensor=user_gps_sensor)
 
     user_gps_sensor.start()
 
