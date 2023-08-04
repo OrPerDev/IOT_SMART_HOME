@@ -1,117 +1,82 @@
-from typing import Optional
 from common.structs import AudioRecord
 from gui import ApplicationGUI
-from gps_sensor import new_gps_sensor
+from gps_sensor import new_gps_sensor, GPSSensor
 from audio import AudioDeviceController
 from dal.audio import AudioRecordRepository
 from network_interface import NetworkInterface
-from functools import partial
-from common.environment import (
-    APPLICATION_GPS_SENSOR_CONFIG,
-    COLLAR_ID,
-)
+from common.environment import APPLICATION_GPS_SENSOR_CONFIG, COLLAR_ID
 
 
-def send_audio_to_server(
-    audio_record_repository: AudioRecordRepository,
-    audio_controller: AudioDeviceController,
-    network_interface: NetworkInterface,
-    record: Optional[AudioRecord] = None,
+def bind_newtork_interface_to_gui_events(
+    gui: ApplicationGUI, network_interface: NetworkInterface
 ):
-    if record is None:
-        audio: bytes = audio_controller.get_audio()
-    else:
-        if record.id is None:
-            raise ValueError("Record id is None, cannot send to server")
-        record = audio_record_repository.get_record(record_id=record.id)
-        audio = record.audio_data
-
-    print("Sending audio to server")
-    network_interface.on_send_voice_message(audio)
-
-
-def save_audio_record(
-    audio_record_repository: AudioRecordRepository,
-    audio_controller: AudioDeviceController,
-    record: Optional[AudioRecord] = None,
-):
-    if record is None:
-        audio: bytes = audio_controller.get_audio()
-        record = AudioRecord(audio_data=audio)
-    else:
-        if record.id is None:
-            raise ValueError("Record id is None, cannot send to server")
-        record = audio_record_repository.get_record(record_id=record.id)
-        audio = record.audio_data
-
-    print(f"Saving audio record {record.name} to database")
-
-    audio_record_repository.store_record(record=record)
-
-
-def delete_audio_record(
-    audio_record_repository: AudioRecordRepository,
-    record: AudioRecord,
-):
-    print(f"Deleting audio record {record.name} from database")
-
-    audio_record_repository.delete_record(record=record)
-
-
-if __name__ == "__main__":
-    gui = ApplicationGUI()
-
-    # network interface (mqtt)
-    network_interface = NetworkInterface(collar_id=COLLAR_ID)
+    # bind gui events to network interface (to display received data)
     network_interface.on_new_gps_location = gui.update_pet_gps_location
-    network_interface.start()
-
-    # dal
-    audio_record_repository = AudioRecordRepository()
-
-    # audio
-    audio_controller = AudioDeviceController()
-
-    # bind dal to gui events
-    gui.on_save_audio_record_callback = partial(
-        save_audio_record,
-        audio_record_repository=audio_record_repository,
-        audio_controller=audio_controller,
+    # bind network interface events to gui (to send data)
+    gui.on_send_record_command = lambda record: network_interface.on_send_voice_message(
+        voice_message=record.audio_data
     )
-    gui.on_delete_audio_record_callback = audio_record_repository.delete_record
-    gui.on_send_existing_audio_record_callback = partial(
-        send_audio_to_server,
-        audio_record_repository=audio_record_repository,
-        audio_controller=audio_controller,
-        network_interface=network_interface,
+
+
+def bind_dal_to_gui_events(
+    gui: ApplicationGUI,
+    audio_controller: AudioDeviceController,
+    audio_record_repository: AudioRecordRepository,
+):
+    # bind gui events to dal (to manipulate data)
+    gui.on_save_audio_record_callback = lambda: audio_record_repository.store_record(
+        record=AudioRecord(audio_data=audio_controller.get_audio())
     )
+    gui.on_delete_record_command = audio_record_repository.delete_record
     gui.on_update_audio_record_name_callback = (
         audio_record_repository.update_record_name
     )
+    # bind dal events to gui (to display data)
     gui.on_fetch_audio_records_callback = audio_record_repository.get_records
 
-    # bind audio controller to gui events
+
+def bind_audio_controller_to_gui_events(
+    gui: ApplicationGUI, audio_controller: AudioDeviceController
+):
+    # bind gui events to audio controller (to manipulate media stream state)
     gui.on_start_recording_callback = audio_controller.start_recording
     gui.on_stop_recording_callback = audio_controller.stop_recording
-    gui.on_send_record_command = partial(
-        send_audio_to_server,
-        audio_record_repository=audio_record_repository,
+
+
+def bind_gps_sensor_to_gui_events(gui: ApplicationGUI, user_gps_sensor: GPSSensor):
+    user_gps_sensor.on_new_location = gui.update_user_gps_location
+
+
+def main():
+    gui = ApplicationGUI()
+
+    user_gps_sensor = new_gps_sensor(**APPLICATION_GPS_SENSOR_CONFIG)
+    network_interface = NetworkInterface(collar_id=COLLAR_ID)
+    audio_record_repository = AudioRecordRepository()
+    audio_controller = AudioDeviceController()
+
+    bind_newtork_interface_to_gui_events(gui=gui, network_interface=network_interface)
+
+    bind_dal_to_gui_events(
+        gui=gui,
         audio_controller=audio_controller,
-        network_interface=network_interface,
-    )
-    gui.on_delete_record_command = partial(
-        delete_audio_record,
         audio_record_repository=audio_record_repository,
     )
 
-    # gps
-    user_gps_sensor = new_gps_sensor(**APPLICATION_GPS_SENSOR_CONFIG)
-    # bind gui to gps events
-    user_gps_sensor.on_new_location = gui.update_user_gps_location
-    # start gps sensor
+    bind_audio_controller_to_gui_events(gui=gui, audio_controller=audio_controller)
+
+    bind_gps_sensor_to_gui_events(gui=gui, user_gps_sensor=user_gps_sensor)
+
     user_gps_sensor.start()
 
-    # run gui
+    network_interface.start()
+
     gui.run()
 
     network_interface.stop()
+
+    user_gps_sensor.stop()
+
+
+if __name__ == "__main__":
+    main()

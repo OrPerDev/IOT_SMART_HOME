@@ -15,6 +15,11 @@ class EmbedTextFn(Protocol):
         ...
 
 
+class AudioRecordActionFn(Protocol):
+    def __call__(self, record: AudioRecord) -> None:
+        ...
+
+
 class RecordControlGUI:
     def __init__(
         self,
@@ -48,9 +53,6 @@ class RecordControlGUI:
         )
         self._on_delete_audio_record_callback = lambda *args, **kwargs: print(
             "Delete audio record"
-        )
-        self._on_send_existing_audio_record_callback = lambda *args, **kwargs: print(
-            "Send existing audio record"
         )
         self._on_update_audio_record_name_callback = lambda *args, **kwargs: print(
             "Update audio record name"
@@ -212,7 +214,12 @@ class RecordControlGUI:
             if self.edit_name_input_box is None:
                 print("Cannot update name without input box")
                 return
-            record.name = self.edit_name_input_box.get("1.0", tk.END)
+            suggested_name = self.edit_name_input_box.get("1.0", tk.END)
+            suggested_name = suggested_name.strip()
+            if len(suggested_name) == 0:
+                print("Cannot update name to empty string")
+                return
+            record.name = suggested_name
             self._on_update_audio_record_name_callback(record)
             self.edit_name_input_box.delete("1.0", tk.END)
             self.toggle_record_name_edit_input_box(disabled=True)
@@ -249,19 +256,19 @@ class RecordControlGUI:
         self._on_stop_recording_callback = callback
 
     @property
-    def on_send_record_command(self) -> Callable:
+    def on_send_record_command(self) -> AudioRecordActionFn:
         return self._on_send_record_command
 
     @on_send_record_command.setter
-    def on_send_record_command(self, callback: Callable) -> None:
+    def on_send_record_command(self, callback: AudioRecordActionFn) -> None:
         self._on_send_record_command = callback
 
     @property
-    def on_delete_record_command(self) -> Callable:
+    def on_delete_record_command(self) -> AudioRecordActionFn:
         return self._on_delete_record_command
 
     @on_delete_record_command.setter
-    def on_delete_record_command(self, callback: Callable) -> None:
+    def on_delete_record_command(self, callback: AudioRecordActionFn) -> None:
         self._on_delete_record_command = callback
 
     @property
@@ -273,27 +280,21 @@ class RecordControlGUI:
         self._on_save_audio_record_callback = callback
 
     @property
-    def on_delete_audio_record_callback(self) -> Callable:
+    def on_delete_audio_record_callback(self) -> AudioRecordActionFn:
         return self._on_delete_audio_record_callback
 
     @on_delete_audio_record_callback.setter
-    def on_delete_audio_record_callback(self, callback: Callable) -> None:
+    def on_delete_audio_record_callback(self, callback: AudioRecordActionFn) -> None:
         self._on_delete_audio_record_callback = callback
 
     @property
-    def on_send_existing_audio_record_callback(self) -> Callable:
-        return self._on_send_existing_audio_record_callback
-
-    @on_send_existing_audio_record_callback.setter
-    def on_send_existing_audio_record_callback(self, callback: Callable) -> None:
-        self._on_send_existing_audio_record_callback = callback
-
-    @property
-    def on_update_audio_record_name_callback(self) -> Callable:
+    def on_update_audio_record_name_callback(self) -> AudioRecordActionFn:
         return self._on_update_audio_record_name_callback
 
     @on_update_audio_record_name_callback.setter
-    def on_update_audio_record_name_callback(self, callback: Callable) -> None:
+    def on_update_audio_record_name_callback(
+        self, callback: AudioRecordActionFn
+    ) -> None:
         self._on_update_audio_record_name_callback = callback
 
     @property

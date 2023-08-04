@@ -1,7 +1,10 @@
 import tkinter as tk
 from typing import Callable
 from .map_panel import MapPanelGUI
-from .record_control import RecordControlGUI
+from .record_control import (
+    RecordControlGUI,
+    AudioRecordActionFn,
+)
 
 
 class ApplicationGUI:
@@ -55,19 +58,19 @@ class ApplicationGUI:
         self.record_control_gui.on_stop_recording_callback = callback
 
     @property
-    def on_send_record_command(self) -> Callable:
+    def on_send_record_command(self) -> AudioRecordActionFn:
         return self.record_control_gui.on_send_record_command
 
     @on_send_record_command.setter
-    def on_send_record_command(self, callback: Callable) -> None:
+    def on_send_record_command(self, callback: AudioRecordActionFn) -> None:
         self.record_control_gui.on_send_record_command = callback
 
     @property
-    def on_delete_record_command(self) -> Callable:
+    def on_delete_record_command(self) -> AudioRecordActionFn:
         return self.record_control_gui.on_delete_record_command
 
     @on_delete_record_command.setter
-    def on_delete_record_command(self, callback: Callable) -> None:
+    def on_delete_record_command(self, callback: AudioRecordActionFn) -> None:
         self.record_control_gui.on_delete_record_command = callback
 
     @property
@@ -79,19 +82,21 @@ class ApplicationGUI:
         self.record_control_gui.on_save_audio_record_callback = callback
 
     @property
-    def on_delete_audio_record_callback(self) -> Callable:
+    def on_delete_audio_record_callback(self) -> AudioRecordActionFn:
         return self.record_control_gui.on_delete_audio_record_callback
 
     @on_delete_audio_record_callback.setter
-    def on_delete_audio_record_callback(self, callback: Callable) -> None:
+    def on_delete_audio_record_callback(self, callback: AudioRecordActionFn) -> None:
         self.record_control_gui.on_delete_audio_record_callback = callback
 
     @property
-    def on_update_audio_record_name_callback(self) -> Callable:
+    def on_update_audio_record_name_callback(self) -> AudioRecordActionFn:
         return self.record_control_gui.on_update_audio_record_name_callback
 
     @on_update_audio_record_name_callback.setter
-    def on_update_audio_record_name_callback(self, callback: Callable) -> None:
+    def on_update_audio_record_name_callback(
+        self, callback: AudioRecordActionFn
+    ) -> None:
         self.record_control_gui.on_update_audio_record_name_callback = callback
 
     @property
@@ -101,14 +106,6 @@ class ApplicationGUI:
     @on_fetch_audio_records_callback.setter
     def on_fetch_audio_records_callback(self, callback: Callable) -> None:
         self.record_control_gui.on_fetch_audio_records_callback = callback
-
-    @property
-    def on_send_existing_audio_record_callback(self) -> Callable:
-        return self.record_control_gui.on_send_existing_audio_record_callback
-
-    @on_send_existing_audio_record_callback.setter
-    def on_send_existing_audio_record_callback(self, callback: Callable) -> None:
-        self.record_control_gui.on_send_existing_audio_record_callback = callback
 
     def run(self):
         self.window.mainloop()
