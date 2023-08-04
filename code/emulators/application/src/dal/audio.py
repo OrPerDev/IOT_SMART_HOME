@@ -23,7 +23,9 @@ class AudioRecordRepository:
         self.conn.commit()
 
     def get_records(self) -> list[AudioRecord]:
-        self.c.execute("SELECT id, name, timestamp, audio_data FROM audio_records")
+        self.c.execute(
+            "SELECT id, name, timestamp, audio_data FROM audio_records ORDER BY timestamp DESC"
+        )
         return [
             AudioRecord(id=row[0], name=row[1], timestamp=row[2], audio_data=row[3])
             for row in self.c.fetchall()
