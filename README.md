@@ -34,10 +34,26 @@ Moreover, the collar's audio module enables remote communication with your furry
 <img src="./assets/block-diagram.jpg" alt="block_diagram"/>
 
 ## Hardware:
-- Collar (Raspberry Pi Pico W) with 2×20 GPIO Headers Male
-- Power Module / Battery Holder For Raspberry Pi Pico
-- GPS Module (Pico-GPS-L76B)
-- Audio Expansion Module for Raspberry Pi Pico (Pico-Audio-Exp)
+⚙️ **Raspberry Pi Pico**: The main microcontroller and foundation for the IoT project.
+
+⚙️ **Waveshare Cellular Board**: The Waveshare board provides the wireless connectivity required for cellular communication. It is slightly wider and longer than the Pico and holds it piggyback-style.
+
+⚙️ **Modem**: The chosen modem is the Waveshare Pico SIM7080G Cat-M1/NB-IoT modem, which supports 4G and beyond connectivity profiles specifically designed for IoT applications.
+
+⚙️ **Antennas**: The board has U.FL antenna connectors for cellular communication and GNSS antenna connectors for global navigation satellite system functionality.
+
+⚙️ **Female Headers**: Female headers are added to the Waveshare board to securely connect and mount the Raspberry Pi Pico.
+
+⚙️ **Nano SIM**: A 1.8V nano SIM card is slotted into the board to provide cellular connectivity.
+
+⚙️ **GPS Module**: The Pico-GPS-L76B module is a GNSS module that provides global navigation satellite system functionality.
+
+⚙️ **Audio Module**: The Pico-Audio-Exp module is an audio expansion module that provides audio functionality to the Raspberry Pi Pico.
+
+⚙️ **Battery**: A 14500 Li-ion battery is used to power the device.
+
+⚙️ **Battery Holder**: The battery is held in place by a battery holder that is connected to the Waveshare board.
+
 
 ## Required Software:
 ### Collar:
