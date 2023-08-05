@@ -1,10 +1,10 @@
 # Smart Collar
 
 ### Demo:
-<img src="./assets/demo.gif" alt="demo" width="600"/>
+<img src="./assets/demo.gif" alt="demo"/>
 
 ### Block Diagram:
-<img src="./assets/block-diagram.jpg" alt="block_diagram" width="900"/>
+<img src="./assets/block-diagram.jpg" alt="block_diagram"/>
 
 ### Hardware:
 TBD
