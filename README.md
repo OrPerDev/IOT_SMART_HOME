@@ -35,6 +35,7 @@ Moreover, the collar's audio module enables remote communication with your furry
 
 ## Hardware:
 - Collar (Raspberry Pi Pico W) with 2×20 GPIO Headers Male
+- Power Module / Battery Holder For Raspberry Pi Pico
 - GPS Module (Pico-GPS-L76B)
 - Audio Expansion Module for Raspberry Pi Pico (Pico-Audio-Exp)
 
