@@ -36,6 +36,8 @@ Moreover, the collar's audio module enables remote communication with your furry
 ## Hardware:
 ⚙️ **Raspberry Pi Pico**: The main microcontroller and foundation for the IoT project.
 
+⚙️ **Male Header Set for Raspberry Pi Pico**: Those male header pins are used to connect the Pico to other modules.
+
 📡 **Blues Notecard (Cellular)**: The Notecard is a small, low-power cellular IoT card that adds wireless connectivity to the Raspberry Pi Pico.
   - The Notecard has a SIM embedded in it and is used to send and receive data from the cloud.
   - This Notecard is also Geo-aware, meaning it can be used to get the device's location.
@@ -45,6 +47,7 @@ Moreover, the collar's audio module enables remote communication with your furry
 ⚙️ **Blues Notecarrier-A**: The Notecarrier-A is a Raspberry Pi add-on board that allows you to connect a Notecard to a Raspberry Pi Pico.
 
 🔊 **Audio Module**: The Pico-Audio-Exp module is an audio expansion module that provides audio functionality to the Raspberry Pi Pico.
+> The Audio Module is connected to the Pico via onboard female headers for direct connection to the Pico's Male headers.
 
 🔋 **Battery**: A 14500 Li-ion battery is used to power the device.
 > The battery is connected to the Pico via a battery holder.
