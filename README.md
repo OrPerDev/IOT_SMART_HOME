@@ -39,6 +39,7 @@ Moreover, the collar's audio module enables remote communication with your furry
 📡 **Blues Notecard (Cellular)**: The Notecard is a small, low-power cellular IoT card that adds wireless connectivity to the Raspberry Pi Pico.
   - The Notecard has a SIM embedded in it and is used to send and receive data from the cloud.
   - This Notecard is also Geo-aware, meaning it can be used to get the device's location.
+  - This Notecard uses LTE-M, NB-IoT, or Cat-1 cellular networks, so it can be configured to work in most countries.
 > The Notecard is connected to the Pico via the Notecarrier-A.
 
 ⚙️ **Blues Notecarrier-A**: The Notecarrier-A is a Raspberry Pi add-on board that allows you to connect a Notecard to a Raspberry Pi Pico.
