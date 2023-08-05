@@ -34,25 +34,25 @@ Moreover, the collar's audio module enables remote communication with your furry
 <img src="./assets/block-diagram.jpg" alt="block_diagram"/>
 
 ## Hardware:
-⚙️ **Raspberry Pi Pico**: The main microcontroller and foundation for the IoT project.
+⚙️ [**Raspberry Pi Pico**](https://thepihut.com/products/raspberry-pi-pico): The main microcontroller and foundation for the IoT project.
 
-⚙️ **Male Header Set for Raspberry Pi Pico**: Those male header pins are used to connect the Pico to other modules.
+⚙️ [**Male Header Set for Raspberry Pi Pico**](https://thepihut.com/products/male-headers-for-raspberry-pi-pico): Those male header pins are used to connect the Pico to other modules.
 
-📡 **Blues Notecard (Cellular)**: The Notecard is a small, low-power cellular IoT card that adds wireless connectivity to the Raspberry Pi Pico.
+📡 [**Blues Notecard (Cellular)**](https://blues.io/products/notecard/): The Notecard is a small, low-power cellular IoT card that adds wireless connectivity to the Raspberry Pi Pico.
   - The Notecard has a SIM embedded in it and is used to send and receive data from the cloud.
   - This Notecard is also Geo-aware, meaning it can be used to get the device's location.
   - This Notecard uses LTE-M, NB-IoT, or Cat-1 cellular networks, so it can be configured to work in most countries.
 > The Notecard is connected to the Pico via the Notecarrier-A.
 
-⚙️ **Blues Notecarrier-A**: The Notecarrier-A is a Raspberry Pi add-on board that allows you to connect a Notecard to a Raspberry Pi Pico.
+⚙️ [**Blues Notecarrier-A**](https://blues.io/products/notecarrier/notecarrier-a/): The Notecarrier-A is a Raspberry Pi add-on board that allows you to connect a Notecard to a Raspberry Pi Pico.
 
-🔊 **Audio Module**: The Pico-Audio-Exp module is an audio expansion module that provides audio functionality to the Raspberry Pi Pico.
+🔊 [**Audio Expansion Module**](https://www.waveshare.com/pico-audio.htm): The Pico-Audio-Exp module is an audio expansion module that provides audio functionality to the Raspberry Pi Pico.
 > The Audio Module is connected to the Pico via onboard female headers for direct connection to the Pico's Male headers.
 
-🔋 **Battery**: A 14500 Li-ion battery is used to power the device.
+🔋 [**14500 Li-ion Battery**](https://www.amazon.com/14500-battery/s?k=14500+battery): A battery is used to power the device.
 > The battery is connected to the Pico via a battery holder.
 
-⚙️ **Battery Holder**: The battery is held in place by a battery holder that is connected to the Waveshare board.
+⚙️ [**Battery Holder Power Module**](https://www.kubii.com/en/modulos-reles/3295-power-module-battery-holder-for-raspberry-pi-pico-3272496306134.html): The battery is held in place by a battery holder that is connected to the Waveshare board.
 
 
 ## Required Software:
