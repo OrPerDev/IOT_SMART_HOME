@@ -62,6 +62,6 @@ Project owners:
 >
 > [Github](https://github.com/chapost1) | [LinkedIn](https://www.linkedin.com/in/shahar-tal-4aa887166/) 
 
-> <a href="https://github.com/chapost1"><kbd><img src="https://avatars.githubusercontent.com/u/91319947?s=25"/></kbd></a> &nbsp; Or Peretz
+> <a href="https://github.com/OrPerDev"><kbd><img src="https://avatars.githubusercontent.com/u/91319947?s=25"/></kbd></a> &nbsp; Or Peretz
 >
 > [Github](https://github.com/OrPerDev) | [LinkedIn](https://www.linkedin.com/in/or-peretz/) 
