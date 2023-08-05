@@ -36,7 +36,7 @@ Moreover, the collar's audio module enables remote communication with your furry
 ## Hardware:
 ⚙️ [**Raspberry Pi Pico**](https://thepihut.com/products/raspberry-pi-pico): The main microcontroller and foundation for the IoT project.
 
-⚙️ [**Male Header Set for Raspberry Pi Pico**](https://thepihut.com/products/male-headers-for-raspberry-pi-pico): Those male header pins are used to connect the Pico to other modules.
+⚙️ [**Male Header Set for Raspberry Pi Pico** x2](https://thepihut.com/products/male-headers-for-raspberry-pi-pico): Those male header pins are used to connect the Pico to the Waveshare board and to the notecarrier.
 
 📡 [**Blues Notecard (Cellular)**](https://blues.io/products/notecard/): The Notecard is a small, low-power cellular IoT card that adds wireless connectivity to the Raspberry Pi Pico.
   - The Notecard has a SIM embedded in it and is used to send and receive data from the cloud.
@@ -45,8 +45,9 @@ Moreover, the collar's audio module enables remote communication with your furry
 > The Notecard is connected to the Pico via the Notecarrier-A.
 
 ⚙️ [**Blues Notecarrier-A**](https://blues.io/products/notecarrier/notecarrier-a/): The Notecarrier-A is a Raspberry Pi add-on board that allows you to connect a Notecard to a Raspberry Pi Pico.
+> The carrier is connected to the controller as a HAT.
 
-🔊 [**Audio Expansion Module**](https://www.waveshare.com/pico-audio.htm): The Pico-Audio-Exp module is an audio expansion module that provides audio functionality to the Raspberry Pi Pico.
+🔊 [**Waveshare Audio Expansion Module**](https://www.waveshare.com/pico-audio.htm): The Pico-Audio-Exp module is an audio expansion module that provides audio functionality to the Raspberry Pi Pico.
 > The Audio Module is connected to the Pico via onboard female headers for direct connection to the Pico's Male headers.
 
 🔋 [**14500 Li-ion Battery**](https://www.amazon.com/14500-battery/s?k=14500+battery): A battery is used to power the device.
