@@ -36,21 +36,17 @@ Moreover, the collar's audio module enables remote communication with your furry
 ## Hardware:
 ⚙️ **Raspberry Pi Pico**: The main microcontroller and foundation for the IoT project.
 
-⚙️ **Waveshare Cellular Board**: The Waveshare board provides the wireless connectivity required for cellular communication. It is slightly wider and longer than the Pico and holds it piggyback-style.
+📡 **Blues Notecard (Cellular)**: The Notecard is a small, low-power cellular IoT card that adds wireless connectivity to the Raspberry Pi Pico.
+  - The Notecard has a SIM embedded in it and is used to send and receive data from the cloud.
+  - This Notecard is also Geo-aware, meaning it can be used to get the device's location.
+> The Notecard is connected to the Pico via the Notecarrier-A.
 
-⚙️ **Modem**: The chosen modem is the Waveshare Pico SIM7080G Cat-M1/NB-IoT modem, which supports 4G and beyond connectivity profiles specifically designed for IoT applications.
+⚙️ **Blues Notecarrier-A**: The Notecarrier-A is a Raspberry Pi add-on board that allows you to connect a Notecard to a Raspberry Pi Pico.
 
-⚙️ **Antennas**: The board has U.FL antenna connectors for cellular communication and GNSS antenna connectors for global navigation satellite system functionality.
+🔊 **Audio Module**: The Pico-Audio-Exp module is an audio expansion module that provides audio functionality to the Raspberry Pi Pico.
 
-⚙️ **Female Headers**: Female headers are added to the Waveshare board to securely connect and mount the Raspberry Pi Pico.
-
-⚙️ **Nano SIM**: A 1.8V nano SIM card is slotted into the board to provide cellular connectivity.
-
-⚙️ **GPS Module**: The Pico-GPS-L76B module is a GNSS module that provides global navigation satellite system functionality.
-
-⚙️ **Audio Module**: The Pico-Audio-Exp module is an audio expansion module that provides audio functionality to the Raspberry Pi Pico.
-
-⚙️ **Battery**: A 14500 Li-ion battery is used to power the device.
+🔋 **Battery**: A 14500 Li-ion battery is used to power the device.
+> The battery is connected to the Pico via a battery holder.
 
 ⚙️ **Battery Holder**: The battery is held in place by a battery holder that is connected to the Waveshare board.
 
