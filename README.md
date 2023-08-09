@@ -37,7 +37,7 @@ Moreover, the collar's audio module enables remote communication with your furry
 <img src="./assets/block-diagram.jpg" alt="block_diagram"/>
 
 ## Use Cases Diagram:
-<img src="./assets/use-cases-diagram.jpg" alt="use_case_diagram"/>
+<img src="./assets/use-cases-diagram.jpeg" alt="use_case_diagram"/>
 
 ## Hardware:
 ⚙️ [**Raspberry Pi Pico**](https://thepihut.com/products/raspberry-pi-pico): The main microcontroller and foundation for the IoT project.
