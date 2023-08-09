@@ -13,6 +13,8 @@ The fear of losing them is a distressing reality for many pet owners. But with t
 
 Moreover, the collar's audio module enables remote communication with your furry friend through voice commands or pre-recorded messages, granting peace of mind from anywhere in the world.
 
+### Product Review Presentation:
+[Product Revie](./assets/presentation.pptx)
 
 ## Features:
 
@@ -30,8 +32,12 @@ Moreover, the collar's audio module enables remote communication with your furry
 ## Demo:
 <img src="./assets/demo.gif" alt="demo"/>
 
+
 ## Block Diagram:
 <img src="./assets/block-diagram.jpg" alt="block_diagram"/>
+
+## Use Case Diagram:
+<img src="./assets/use-case-diagram.jpg" alt="use_case_diagram"/>
 
 ## Hardware:
 ⚙️ [**Raspberry Pi Pico**](https://thepihut.com/products/raspberry-pi-pico): The main microcontroller and foundation for the IoT project.
